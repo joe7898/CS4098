@@ -3,6 +3,7 @@
  * Student ID: 230013491
  * Description: Draws the scatter plot and updates the curve + status text
  * when the slider moves (simple line vs fitting every blue point).
+ * Very simple version with lots of room for improvement
  */
 
 const canvas = document.getElementById("canvas");
@@ -117,7 +118,7 @@ function update() {
       "Simple line: near the red points, even if it misses some blue ones.";
   } else if (w >= 6) {
     status.textContent =
-      "Hits every blue point — but drifts away from the red ones.";
+      "Eventually hits every blue point — but drifts away from the red ones.";
   } else {
     status.textContent =
       "Somewhat close: following the blues more, starting to leave the reds.";
