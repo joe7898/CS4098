@@ -1,0 +1,94 @@
+<!--
+  Author: Omar Raza
+  Student ID: 230013491
+  Description: Page layout for a small CS4098 demo with a scatter plot, slider,
+  and short status text showing simple fit vs chasing every measured point.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS4098 prototype — fitting a pattern</title>
+  <!-- Basic page styling (layout only) -->
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 640px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      line-height: 1.45;
+      color: #222;
+    }
+    h1 { font-size: 1.2rem; margin: 0 0 0.5rem; font-weight: 650; }
+    .lead { margin: 0 0 1.25rem; color: #444; }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 300px;
+      border: 1px solid #e0e0e0;
+      background: #fafafa;
+    }
+    .legend {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.85rem;
+      color: #555;
+      margin: 0.5rem 0 1.25rem;
+    }
+    .dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 0.25rem;
+    }
+    .slider-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+    .slider-row span {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    .slider-row span:last-child { text-align: right; }
+    input[type="range"] { width: 100%; grid-column: 1 / -1; }
+    .status {
+      min-height: 2.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <!-- Short intro -->
+  <h1>Fitting a pattern</h1>
+  <p class="lead">
+    Blue points are what we already measured. Red points are new.
+    Move the slider and watch which ones the line stays near.
+  </p>
+
+  <!-- Chart drawn by fit.js -->
+  <canvas id="canvas" width="640" height="300"></canvas>
+  <p class="legend">
+    <span><i class="dot" style="background:#1a6ecc"></i>Already measured</span>
+    <span><i class="dot" style="background:#c44"></i>New</span>
+  </p>
+
+  <!-- Slider: left = simple line, right = through every blue point -->
+  <div class="slider-row">
+    <span>Simple line</span>
+    <span></span>
+    <span>Hit every blue point</span>
+    <input id="wiggle" type="range" min="0" max="8" value="0" step="1" />
+  </div>
+  <!-- One-line feedback for the current slider position -->
+  <p class="status" id="status"></p>
+
+  <script src="fit.js"></script>
+</body>
+</html>
