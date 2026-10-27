@@ -20,35 +20,38 @@
 <body class="variant-a">
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- Site chrome: title, module links, layout toggle, restart -->
-  <header class="site-header">
-    <div class="site-header-inner">
-      <p class="site-title"><a href="#home">Calibrated trust</a></p>
+  <!-- Page frame: keeps reading width steady on wide / maximised screens -->
+  <div class="site-frame">
+    <!-- Site chrome: title, module links, layout toggle, restart -->
+    <header class="site-header">
+      <div class="site-header-inner">
+        <p class="site-title"><a href="#home">Calibrated trust</a></p>
 
-      <nav class="site-nav" id="module-nav" aria-label="Modules">
-        <a href="#home" data-route="home">Contents</a>
-        <a href="#fit" data-route="fit">1 · Old data</a>
-        <a href="#baserate" data-route="baserate">2 · Accuracy</a>
-        <a href="#uncertainty" data-route="uncertainty">3 · Uncertainty</a>
-      </nav>
+        <nav class="site-nav" id="module-nav" aria-label="Modules">
+          <a href="#home" data-route="home">Contents</a>
+          <a href="#fit" data-route="fit">1 · Old data</a>
+          <a href="#baserate" data-route="baserate">2 · Accuracy</a>
+          <a href="#uncertainty" data-route="uncertainty">3 · Uncertainty</a>
+        </nav>
 
-      <div class="header-tools">
-        <!-- Variant A = graph-first; Variant B = more guidance (report FR4) -->
-        <div class="seg" id="variant-seg" role="group" aria-label="Page layout">
-          <button type="button" data-variant="a" aria-pressed="true">Graph-first</button>
-          <button type="button" data-variant="b" aria-pressed="false">More guidance</button>
+        <div class="header-tools">
+          <!-- Variant A = graph-first; Variant B = more guidance (report FR4) -->
+          <div class="seg" id="variant-seg" role="group" aria-label="Page layout">
+            <button type="button" data-variant="a" aria-pressed="true">Graph-first</button>
+            <button type="button" data-variant="b" aria-pressed="false">More guidance</button>
+          </div>
+          <button type="button" class="btn" id="restart-btn" hidden>Restart</button>
         </div>
-        <button type="button" class="btn" id="restart-btn" hidden>Restart</button>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Active home page or module mounts here -->
-  <main id="main" tabindex="-1"></main>
+    <!-- Active home page or module mounts here -->
+    <main id="main" tabindex="-1"></main>
 
-  <footer class="site-footer">
-    CS4098 · Omar Raza (230013491) · Static pages for a short session · No generative AI in the artefact
-  </footer>
+    <footer class="site-footer">
+      CS4098 · Omar Raza (230013491) · Static pages for a short session · No generative AI in the artefact
+    </footer>
+  </div>
 
   <!-- Helpers first, then modules, then shell router -->
   <script src="js/lib/ui.js"></script>

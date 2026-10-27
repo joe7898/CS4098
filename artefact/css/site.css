@@ -31,8 +31,10 @@
   --sans: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --measure: 38rem;
-  --shell: 1120px;
+  /* Soft ceiling for single-column reading (home / More guidance) */
+  --measure: min(42rem, 100%);
+  /* Side padding grows with the viewport */
+  --frame-pad: clamp(1rem, 3.5vw, 4rem);
   --radius: 2px;
 }
 
@@ -62,6 +64,14 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* Full-bleed page shell — width follows the window; padding is fluid */
+.site-frame {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 a {
   color: var(--accent);
 }
@@ -89,7 +99,6 @@ a:hover {
    Header: quiet chrome (Seeing Theory–like)
    --------------------------------------------------------------------------- */
 .site-header {
-  background: transparent;
   border-bottom: none;
   position: sticky;
   top: 0;
@@ -99,9 +108,8 @@ a:hover {
 }
 
 .site-header-inner {
-  max-width: var(--shell);
-  margin: 0 auto;
-  padding: 1rem 1.5rem 0.85rem;
+  width: 100%;
+  padding: 1rem var(--frame-pad) 0.85rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem 1.5rem;
@@ -201,9 +209,9 @@ input[type="range"]:focus-visible {
 }
 
 main {
-  max-width: var(--shell);
-  margin: 0 auto;
-  padding: 1.75rem 1.5rem 4rem;
+  flex: 1 0 auto;
+  width: 100%;
+  padding: 1.75rem var(--frame-pad) 3.25rem;
 }
 
 .chapter-kicker {
@@ -258,6 +266,7 @@ h1 {
 
 /* ---------------------------------------------------------------------------
    Graph-first split: prose | dark stage
+   Seeing Theory rhythm: ~40% text / ~60% stage, both scale with the window
    --------------------------------------------------------------------------- */
 .lesson {
   display: grid;
@@ -266,8 +275,53 @@ h1 {
 }
 
 @media (min-width: 900px) {
+  /*
+   * Module host (main > div) is the ST-style 40/60 grid.
+   * display:contents on .lesson lets prose + stage join that grid with the title/claim.
+   */
+  .variant-a main > div:has(.lesson) {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    column-gap: clamp(1.25rem, 3vw, 3rem);
+    align-items: start;
+  }
+
+  .variant-a main > div:has(.lesson) > .chapter-kicker,
+  .variant-a main > div:has(.lesson) > h1,
+  .variant-a main > div:has(.lesson) > .claim,
+  .variant-a main > div:has(.lesson) > .lede {
+    grid-column: 1;
+    max-width: none;
+    width: 100%;
+  }
+
   .variant-a .lesson {
-    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.32fr);
+    display: contents;
+  }
+
+  .variant-a .lesson .prose {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  .variant-a .lesson .viz-pane {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: 4.25rem;
+    align-self: start;
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Text fills the left column as it grows — no fixed rem ceiling */
+  .variant-a .prose p,
+  .variant-a .prose ul,
+  .variant-a .prose ol,
+  .variant-a .takeaway,
+  .variant-a .choice-feedback,
+  .variant-a .further {
+    max-width: none;
   }
 }
 
@@ -327,8 +381,10 @@ h1 {
   background: var(--stage);
   color: var(--stage-text);
   border: none;
-  padding: 1.15rem 1.15rem 1.25rem;
+  padding: clamp(1rem, 1.5vw, 1.35rem);
   border-radius: var(--radius);
+  width: 100%;
+  min-width: 0;
 }
 
 .viz-pane canvas {
@@ -340,7 +396,7 @@ h1 {
 }
 
 .viz-pane--compact {
-  max-width: 34rem;
+  max-width: min(34rem, 100%);
 }
 
 .viz-pane--compact canvas {
@@ -656,18 +712,19 @@ h1 {
    Home (chapter landing)
    --------------------------------------------------------------------------- */
 .home-intro {
-  max-width: 36rem;
+  max-width: min(48rem, 100%);
   margin-bottom: 2.5rem;
 }
 
 .home-intro .lede {
   font-size: 1.2rem;
   line-height: 1.5;
+  max-width: none;
 }
 
 .home-intro p {
   color: var(--muted);
-  max-width: 36rem;
+  max-width: none;
 }
 
 .chapter-list {
@@ -676,7 +733,7 @@ h1 {
   padding: 0;
   display: grid;
   gap: 0.65rem;
-  max-width: 40rem;
+  max-width: min(52rem, 100%);
 }
 
 .chapter-list li {
@@ -722,7 +779,7 @@ h1 {
 
 .home-aside {
   margin-top: 2rem;
-  max-width: 36rem;
+  max-width: min(48rem, 100%);
   font-size: 0.88rem;
   color: var(--muted);
 }
@@ -731,7 +788,9 @@ h1 {
    More guidance: workbook steps (still airy)
    --------------------------------------------------------------------------- */
 .guided-flow {
-  max-width: 40rem;
+  /* Grows with the window (Seeing Theory–style), not a hard rem stop */
+  max-width: min(56rem, 100%);
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -1027,20 +1086,18 @@ h1 {
 }
 
 .site-footer {
-  max-width: var(--shell);
-  margin: 0 auto;
-  padding: 0 1.5rem 2.5rem;
+  padding: 0 var(--frame-pad) 2.25rem;
   font-size: 0.75rem;
   color: var(--muted);
 }
 
 @media (max-width: 560px) {
   main {
-    padding: 1.25rem 1rem 3rem;
+    padding: 1.25rem var(--frame-pad) 3rem;
   }
 
   .site-header-inner {
-    padding: 0.85rem 1rem;
+    padding: 0.85rem var(--frame-pad);
   }
 
   h1 {
