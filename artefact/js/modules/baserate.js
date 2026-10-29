@@ -47,8 +47,8 @@
     const guided = variant === "b";
     root.innerHTML = "";
 
-    root.append(el("p", { className: "chapter-kicker", text: "Module 2 of 3" }));
-    root.append(el("h1", { text: "When a high accuracy still misleads" }));
+    const kicker = el("p", { className: "chapter-kicker", text: "Module 2 of 3" });
+    const title = el("h1", { text: "When a high accuracy still misleads" });
 
     // Claim text shared by both layouts (Claire / news headline)
     const claimHtml =
@@ -259,6 +259,7 @@
 
     if (guided) {
       // Variant B: vertical workbook — instruct → try → notice → conclude
+      root.append(kicker, title);
       const flow = el("div", { className: "guided-flow" });
 
       const step1 = el("section", { className: "guided-step" });
@@ -323,19 +324,16 @@
       flow.append(nextModule("#uncertainty", "Module 3 — A single score that hides a range"));
       root.append(flow);
     } else {
-      // Variant A: Seeing Theory rhythm — teaching text left, dark stage right
+      // Variant A: Seeing Theory — left copy column + right stage (both scale)
       const claim = el("div", { className: "claim" });
       claim.innerHTML = claimHtml;
-      root.append(claim);
-      root.append(
-        el("p", {
-          className: "lede",
-          text:
-            "Keep accuracy high and make the condition rarer. Watch the large percentage — that is the chance a positive is true.",
-        })
-      );
 
-      const lesson = el("div", { className: "lesson" });
+      const orient = el("p", {
+        className: "lede",
+        text:
+          "Keep accuracy high and make the condition rarer. Watch the large percentage — that is the chance a positive is true.",
+      });
+
       const prose = el("div", { className: "prose" });
       prose.append(
         el("p", {
@@ -358,8 +356,12 @@
       prose.append(further);
       prose.append(nextModule("#uncertainty", "Module 3 — A single score that hides a range"));
 
-      lesson.append(prose, vizPane);
-      root.append(lesson);
+      const copy = el("div", { className: "module-copy" });
+      copy.append(kicker, title, claim, orient, prose);
+
+      const split = el("div", { className: "module-split" });
+      split.append(copy, vizPane);
+      root.append(split);
     }
 
     update();

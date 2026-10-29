@@ -111,7 +111,7 @@
         "uncertainty",
         "3",
         "A single score that hides a range",
-        "An AI helper shows confidence 82 with no band — is that enough to act on?",
+        "Isla’s writing helper shows confidence 82 with no band — enough to accept a rewrite if her cutoff is 75?",
       ],
     ];
 

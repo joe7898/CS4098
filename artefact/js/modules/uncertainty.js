@@ -1,26 +1,30 @@
 /**
  * Author: Omar Raza
  * Student ID: 230013491
- * Description: Module 3 — uncertainty / overprecision (Isla or Harris /
- * lone “confidence 82” badge). Point estimate stays fixed; slider widens a
- * plausible band. Supports Graph-first (A) and More guidance (B) layouts.
+ * Description: Module 3 — uncertainty / overprecision (Isla / AI writing helper).
+ * Starts as a lone “confidence 82” badge (the misleading UI), then reveals a
+ * plausible band. A decision rule (accept rewrite if score ≥ 75) flips when
+ * the low end of the band crosses the threshold. Graph-first (A) and More
+ * guidance (B) layouts from the report.
  */
 
 (function (global) {
   "use strict";
 
   // ---------------------------------------------------------------------------
-  // Fixed reported score; band half-width comes from the slider
+  // Fixed reported score; decision threshold; band half-width from slider
+  // Slider 0 = badge only (no range shown); 1–18 = revealed band width
   // ---------------------------------------------------------------------------
 
   const POINT = 82;
+  const THRESHOLD = 75; // Isla’s rule: accept the AI rewrite only if score ≥ 75
 
   function ui() {
     return global.CS4098.ui;
   }
 
   // ---------------------------------------------------------------------------
-  // Mount: build Graph-first or More guidance page, then wire the band
+  // Mount: build Graph-first or More guidance page, then wire badge → band
   // ---------------------------------------------------------------------------
 
   function mount(root, opts) {
@@ -33,14 +37,15 @@
     const guided = variant === "b";
     root.innerHTML = "";
 
-    root.append(el("p", { className: "chapter-kicker", text: "Module 3 of 3" }));
-    root.append(el("h1", { text: "A single score that hides a range" }));
+    const kicker = el("p", { className: "chapter-kicker", text: "Module 3 of 3" });
+    const title = el("h1", { text: "A single score that hides a range" });
 
-    // Claim text shared by both layouts (lone confidence badge)
+    // Claim: Isla + concrete act (accept AI rewrite of a lab sentence)
     const claimHtml =
-      '<span class="label">Baseline example (Isla or Harris)</span>' +
-      "<p>An AI writing helper highlights a draft sentence and shows one badge: " +
+      '<span class="label">Baseline example (Isla)</span>' +
+      "<p>Isla’s AI writing helper highlights a sentence in her lab draft and shows one badge: " +
       "<strong>confidence 82</strong>. No range. No “could be lower.” " +
+      "Her rule of thumb is simple: <strong>accept the rewrite if the score is at least 75</strong>. " +
       "The interface invites the reading: we know exactly where we stand.</p>";
 
     // ----- Takeaway + trust / question / reject -----
@@ -48,31 +53,31 @@
       verdictHtml:
         "<strong>Do not treat 82 alone as exact knowledge.</strong> " +
         "A point estimate without a range can create overprecision — more confidence than the evidence supports. " +
-        "The calibrated move is to <strong>question</strong> a lone score until a plausible band is shown, " +
-        "and to <strong>reject</strong> the claim “we know exactly where we stand” when the band would change the decision.",
+        "If a plausible low end would fall below Isla’s 75 cutoff, the calibrated move is to <strong>question</strong> the lone badge " +
+        "and to <strong>reject</strong> “we know exactly where we stand.”",
       judgement: {
         trust: {
           tone: "miscalibrated",
           title: "Trust — too strong for a lone badge",
           body:
             "Trusting 82 as exact because the UI looks precise is how unwarranted trust forms: presentation persuades without showing uncertainty. " +
-            "Widen the band on the figure: the same centre can sit inside a range that would change what you do. " +
+            "Reveal the band: when the low end drops below 75, Isla’s accept/reject rule flips even though the badge still says 82. " +
             "<strong>Calibrated alternative:</strong> question 82 until a range is reported.",
         },
         question: {
           tone: "calibrated",
           title: "Question — the calibrated response",
           body:
-            "Ask how wide a plausible range is, and whether the low end would change your decision. " +
-            "<strong>One sentence to use:</strong> “82 without a range isn’t enough — how wide could this still be?”",
+            "Ask how wide a plausible range is, and whether the low end would change the rewrite decision. " +
+            "<strong>One sentence Isla can use:</strong> “82 without a range isn’t enough — would the low end still clear my 75 cutoff?”",
         },
         reject: {
           tone: "calibrated",
           title: "Reject — right for the overclaim",
           body:
-            "Reject “we know exactly where we stand” when only a point is shown and uncertainty is material. " +
+            "Reject “we know exactly where we stand” when only a point is shown and the band would change the decision. " +
             "You are not rejecting every score; you are rejecting that completeness claim. " +
-            "<strong>One sentence to use:</strong> “A single confidence badge is not exact knowledge — I reject that reading.”",
+            "<strong>One sentence Isla can use:</strong> “A single confidence badge is not exact knowledge — I reject that reading.”",
         },
       },
     });
@@ -84,7 +89,7 @@
       "<h3>Overprecision</h3>" +
       "<p>Showing 82 with no range can create <span class=\"math\">overprecision</span> — more confidence in the digit than the data support. That is a calibration failure (overtrust in exactness).</p>" +
       '<p class="formula">reported value ± margin → interval [low, high]</p>' +
-      "<p>If a decision would change at the low end of the band, the single number was not enough.</p>";
+      "<p>Isla’s decision rule (accept if ≥ 75) makes the point concrete: if the low end of the band falls below 75, the lone badge was not enough.</p>";
 
     // Longer chapter notes (More guidance, shown in full)
     const furtherGuided =
@@ -95,58 +100,89 @@
       "In everyday reading — and in Spiegelhalter-style communication — a displayed band is also a plain warning: " +
       "do not pretend the estimate is known more finely than this. This module uses that everyday reading on purpose.</p>" +
       "<h3>Contractual trust</h3>" +
-      "<p>Jacovi and colleagues treat trust in AI as contractual: you trust a specific claim (for example “82 is exact enough to act on”), not “the system” in general. " +
+      "<p>Jacovi and colleagues treat trust in AI as contractual: you trust a specific claim (for example “82 is exact enough to accept the rewrite”), not “the system” in general. " +
       "If the interface never shows uncertainty, that contract can look stronger than the evidence — unwarranted trust from presentation.</p>" +
       "<h3>What this page leaves out</h3>" +
-      "<p>It does not derive a formal 95% confidence interval from a sample. It teaches the claim-literacy habit: ask for the range before you trust the point.</p>";
+      "<p>It does not derive a formal 95% confidence interval from a sample. It teaches the claim-literacy habit: ask for the range before you trust the point — especially when a decision threshold is in play.</p>";
 
-    // ----- Interactive stage (point, band, width slider) -----
+    // ----- Interactive stage: badge first, then band + decision flip -----
     const vizPane = el("div", {
       className: "viz-pane" + (guided ? " viz-pane--compact" : ""),
     });
+
+    // Fake product chrome — what Isla actually sees before a range is shown
+    const badgeChrome = el("div", { className: "badge-chrome", id: "badge-chrome" });
+    badgeChrome.innerHTML =
+      '<p class="badge-kicker">AI writing helper</p>' +
+      '<p class="badge-draft">“…the results were statistically significant (p &lt; .05)…”</p>' +
+      '<div class="confidence-badge" aria-hidden="false">' +
+      '<span class="confidence-badge-label">Confidence</span>' +
+      '<span class="confidence-badge-num">82</span>' +
+      "</div>" +
+      '<p class="badge-note" id="badge-note">No range shown — this is the misleading interface.</p>';
+
+    const compare = el("div", { className: "compare-strip", id: "band-compare" });
+    compare.innerHTML =
+      '<div class="compare-card past"><div class="compare-label">What the badge claims</div><div class="compare-num">exact 82</div></div>' +
+      '<div class="compare-card next"><div class="compare-label">Honest range</div><div class="compare-num" id="band-readout">hidden</div></div>';
+
+    const decision = el("div", {
+      className: "decision-hero",
+      id: "decision-hero",
+      attrs: { "aria-live": "polite" },
+    });
+    decision.innerHTML =
+      '<p class="decision-rule">Isla’s rule: accept rewrite if score ≥ ' +
+      THRESHOLD +
+      "</p>" +
+      '<p class="decision-verdict" id="decision-verdict">—</p>' +
+      '<p class="decision-explain" id="decision-explain"></p>';
+
     const scoreLine = el("div", {
       className: "score-line",
-      attrs: { role: "img", "aria-label": "Score 82 with uncertainty band" },
+      id: "score-line",
+      attrs: { role: "img", "aria-label": "Score 82 with optional uncertainty band" },
     });
     const axis = el("div", { className: "score-axis" });
-    const band = el("div", { className: "score-band" });
+    const band = el("div", { className: "score-band", id: "score-band" });
+    const thresholdMark = el("div", {
+      className: "score-threshold",
+      attrs: { title: "Decision cutoff 75" },
+    });
     const point = el("div", { className: "score-point" });
     const pointLabel = el("div", { className: "score-point-label", text: "82" });
-    scoreLine.append(axis, band, point, pointLabel);
+    scoreLine.append(axis, band, thresholdMark, point, pointLabel);
 
     const labels = el("div", { className: "score-labels" });
-    labels.innerHTML = "<span>0</span><span>50</span><span>100</span>";
-
-    const compare = el("div", { className: "compare-strip" });
-    compare.innerHTML =
-      '<div class="compare-card past"><div class="compare-label">Reported point</div><div class="compare-num">82</div></div>' +
-      '<div class="compare-card next"><div class="compare-label">Plausible band</div><div class="compare-num" id="band-readout">—</div></div>';
+    labels.innerHTML =
+      "<span>0</span><span>50</span><span class=\"thresh-lab\">75 cutoff</span><span>100</span>";
 
     const control = el("div", { className: "control" });
     const ends = el("div", { className: "ends" });
-    ends.innerHTML = "<span>Narrower band</span><span>Wider “could be”</span>";
+    ends.innerHTML = "<span>Badge only</span><span>Wider “could be”</span>";
     const slider = el("input", {
       type: "range",
-      min: "1",
+      min: "0",
       max: "18",
-      value: "4",
+      value: "0",
       step: "1",
-      attrs: { "aria-label": "Width of uncertainty around the score" },
+      attrs: { "aria-label": "Reveal and widen uncertainty around the score" },
     });
     const prompt = el("p", {
       className: "drag-prompt",
-      text: "Widen the band and watch whether 82 still feels “exact.”",
+      text: "Start on the left (badge only). Drag right to reveal a range — watch whether Isla’s 75 rule still holds.",
     });
     const live = el("p", { className: "live", attrs: { "aria-live": "polite" } });
     control.append(ends, slider, prompt, live);
-    vizPane.append(compare, scoreLine, labels, control);
+
+    vizPane.append(badgeChrome, compare, decision, scoreLine, labels, control);
 
     const outcomeSummary = el("div", {
       className: "outcome-summary",
       attrs: { "aria-live": "polite" },
     });
     outcomeSummary.innerHTML =
-      '<span class="outcome-label">What the band is saying</span><p></p>';
+      '<span class="outcome-label">What just changed</span><p></p>';
     const outcomeP = outcomeSummary.querySelector("p");
 
     // Map 0–100 score onto the horizontal track (% of the line)
@@ -154,46 +190,98 @@
       return 6 + (v / 100) * 88;
     }
 
-    // Place band + tick, refresh readout and outcome copy
+    // Badge-only vs band revealed; decision flips when low end < 75
     function update() {
       const half = Number(slider.value);
+      const revealed = half > 0;
       const lo = Math.max(0, POINT - half);
       const hi = Math.min(100, POINT + half);
+      const flips = revealed && lo < THRESHOLD;
 
-      band.style.left = pct(lo) + "%";
-      band.style.width = pct(hi) - pct(lo) + "%";
+      // Threshold tick always visible once we have a scale
+      thresholdMark.style.left = pct(THRESHOLD) + "%";
       point.style.left = pct(POINT) + "%";
       pointLabel.style.left = pct(POINT) + "%";
 
-      const bandEl = document.getElementById("band-readout");
-      if (bandEl) bandEl.textContent = lo + "–" + hi;
-
-      let gloss;
-      if (half <= 3) {
-        gloss =
-          "Narrow band: 82 may still be usable as a centre if the method is sound — but it remains a range, not a certainty.";
-      } else if (half <= 8) {
-        gloss =
-          "Moderate band: nearby values remain plausible. Acting as if 82 were exact skips that spread.";
-      } else {
-        gloss =
-          "Wide band: the same situation is compatible with quite different scores. “We know exactly where we stand” overclaims.";
+      if (!revealed) {
+        band.style.display = "none";
+        badgeChrome.classList.remove("is-honest");
+        document.getElementById("badge-note").textContent =
+          "No range shown — this is the misleading interface.";
+        document.getElementById("band-readout").textContent = "hidden";
+        compare.classList.remove("warn");
+        document.getElementById("decision-verdict").textContent =
+          "Accept rewrite (badge says 82 ≥ 75)";
+        document.getElementById("decision-verdict").dataset.state = "accept";
+        document.getElementById("decision-explain").textContent =
+          "With only the badge, Isla’s rule looks satisfied. The interface never shows that 82 might sit inside a wider range.";
+        live.textContent =
+          "Badge only: confidence 82, no range. The helper looks exact.";
+        if (outcomeP) {
+          outcomeP.innerHTML =
+            "Right now you see what Isla sees: a polished <strong>confidence 82</strong> with no band. " +
+            "Her rule (<strong>accept if ≥ 75</strong>) looks fine. Drag right to reveal a plausible range and check whether the <em>low end</em> still clears 75.";
+        }
+        return;
       }
 
-      live.textContent =
-        "Reported score " + POINT + "; plausible band about " + lo + "–" + hi + ". " + gloss;
+      band.style.display = "block";
+      band.style.left = pct(lo) + "%";
+      band.style.width = pct(hi) - pct(lo) + "%";
+      badgeChrome.classList.add("is-honest");
+      document.getElementById("badge-note").textContent =
+        "Range revealed — same centre, honest spread.";
+      document.getElementById("band-readout").textContent = lo + "–" + hi;
 
-      if (outcomeP) {
-        outcomeP.innerHTML =
-          "The dark tick is the <strong>point</strong> the helper showed (82). The shaded region is a <strong>plausible band</strong> you control: about <strong>" +
+      const verdictEl = document.getElementById("decision-verdict");
+      const explainEl = document.getElementById("decision-explain");
+
+      if (flips) {
+        compare.classList.add("warn");
+        verdictEl.textContent = "Decision flips — do not treat 82 as enough";
+        verdictEl.dataset.state = "flip";
+        explainEl.textContent =
+          "Low end " +
+          lo +
+          " is below Isla’s cutoff of " +
+          THRESHOLD +
+          ". The badge still says 82, but an honest range would change whether she accepts the rewrite.";
+        live.textContent =
+          "Band " +
           lo +
           "–" +
           hi +
-          "</strong>. " +
-          gloss +
-          " " +
-          "Spiegelhalter-style communication keeps an honest place for uncertainty: say what you know, and how shaky it is. " +
-          "If your decision would change near the low end of this band, the lone badge was not a complete story.";
+          ": low end crosses 75. Same centre, different decision.";
+      } else {
+        compare.classList.remove("warn");
+        verdictEl.textContent = "Accept still looks OK (low end ≥ 75)";
+        verdictEl.dataset.state = "accept";
+        explainEl.textContent =
+          "Low end " +
+          lo +
+          " still clears 75. A narrow honest range can leave the decision unchanged — but 82 alone never showed that.";
+        live.textContent =
+          "Band " + lo + "–" + hi + ": low end still clears the 75 cutoff.";
+      }
+
+      if (outcomeP) {
+        if (flips) {
+          outcomeP.innerHTML =
+            "The badge still shows <strong>82</strong>, but the honest band is about <strong>" +
+            lo +
+            "–" +
+            hi +
+            "</strong>. The low end is <strong>below 75</strong>, so Isla’s accept/reject rule flips. " +
+            "That is the overprecision lesson: a lone score can look decision-ready while a range would change the act.";
+        } else {
+          outcomeP.innerHTML =
+            "Band about <strong>" +
+            lo +
+            "–" +
+            hi +
+            "</strong>. Low end still clears <strong>75</strong>, so the rewrite decision may stay the same — " +
+            "but only the range made that checkable. Widen further and watch the decision flip.";
+        }
       }
     }
 
@@ -203,7 +291,7 @@
     let further = null;
 
     if (guided) {
-      // Variant B: vertical workbook — instruct → try → notice → conclude
+      root.append(kicker, title);
       const flow = el("div", { className: "guided-flow" });
 
       const step1 = el("section", { className: "guided-step" });
@@ -217,16 +305,16 @@
         el("p", {
           text:
             "Separate two claims. Claim A: the system’s best single summary is 82. " +
-            "Claim B: we know exactly where we stand. A can be reasonable while B is not. " +
-            "Interfaces often present A in a way that feels like B — polish and a single digit doing the persuading.",
+            "Claim B: we know exactly where we stand — exact enough for Isla to accept the rewrite under a 75 cutoff. " +
+            "A can be reasonable while B is not. Interfaces often present A in a way that feels like B.",
         })
       );
       step1.append(
         el("p", {
           text:
-            "Trust research on automation and AI argues for appropriate (calibrated) trust: match confidence to capability. " +
-            "Overtrust here looks like treating a point estimate as exact. Distrust would be ignoring a narrow, well-supported range. " +
-            "This page targets the first failure — overprecision from a lone score.",
+            "This page starts on the misleading UI on purpose: badge only, no range. " +
+            "You then reveal a band and check whether the low end still clears 75. " +
+            "That is the decision test — the same idea as opposite-swing meters or a falling PPV, but for overprecision.",
         })
       );
       flow.append(step1);
@@ -234,20 +322,20 @@
       const step2 = el("section", { className: "guided-step" });
       step2.innerHTML =
         '<p class="step-label">Step 2 — How to use the display</p>' +
-        "<h2>Point, band, and the decision test</h2>" +
+        "<h2>Badge, band, and the 75 cutoff</h2>" +
         "<ol>" +
-        "<li><strong>Point (82)</strong> — the reported score; fixed on this page.</li>" +
-        "<li><strong>Band</strong> — values still treated as plausible; you widen or narrow it.</li>" +
-        "<li><strong>Decision test</strong> — ask whether the low end of the band would change what you do with the draft sentence.</li>" +
-        "<li>If yes, a lone badge was incomplete. If the band is narrow and the method is trusted, acting on the centre can be more warranted.</li>" +
+        "<li><strong>Badge only (slider left)</strong> — what Isla sees: confidence 82, no range.</li>" +
+        "<li><strong>Band (drag right)</strong> — values still treated as plausible around 82.</li>" +
+        "<li><strong>75 cutoff</strong> — Isla’s rule for accepting the rewrite; marked on the scale.</li>" +
+        "<li><strong>Decision flip</strong> — when the low end drops below 75, accept becomes unsafe even though the badge still says 82.</li>" +
         "</ol>" +
-        "<p>Move the slider slowly. After each move, read the written summary under the figure.</p>";
+        "<p>Move the slider slowly. After each move, read the decision line and the written summary.</p>";
       flow.append(step2);
 
       const step3 = el("section", { className: "guided-step" });
       step3.innerHTML =
         '<p class="step-label">Step 3 — Try the control</p>' +
-        "<h2>Widen uncertainty and watch the story change</h2>";
+        "<h2>Reveal uncertainty and watch the decision</h2>";
       step3.append(vizPane, outcomeSummary);
       flow.append(step3);
 
@@ -266,32 +354,25 @@
       flow.append(nextModule("#home", "Back to Contents"));
       root.append(flow);
     } else {
-      // Variant A: Seeing Theory rhythm — teaching text left, dark stage right
+      // Variant A: Seeing Theory — left copy + right stage (outcome on A too)
       const claim = el("div", { className: "claim" });
       claim.innerHTML = claimHtml;
-      root.append(claim);
-      root.append(
-        el("p", {
-          className: "lede",
-          text: "Widen the band around 82. If the low end would change your decision, a lone badge was not enough.",
-        })
-      );
 
-      const lesson = el("div", { className: "lesson" });
+      const orient = el("p", {
+        className: "lede",
+        text:
+          "Start with the badge alone. Reveal a range and watch whether Isla’s “accept if ≥ 75” rule still holds.",
+      });
+
       const prose = el("div", { className: "prose" });
       prose.append(
         el("p", {
-          className: "lede",
           text:
-            "The point stays put. Only honesty about uncertainty moves. If the low end would change your decision, 82 alone was not enough.",
+            "A lone confidence badge can create overprecision — unwarranted trust in exactness. " +
+            "The decision cutoff makes the cost visible: when the low end crosses 75, 82 alone was not enough.",
         })
       );
-      prose.append(
-        el("p", {
-          text:
-            "A lone confidence badge can create overprecision — unwarranted trust in exactness. Ask for the range.",
-        })
-      );
+      prose.append(outcomeSummary);
       prose.append(takeaway.el);
 
       further = el("details", { className: "further" });
@@ -300,15 +381,19 @@
       prose.append(further);
       prose.append(nextModule("#home", "Back to Contents"));
 
-      lesson.append(prose, vizPane);
-      root.append(lesson);
+      const copy = el("div", { className: "module-copy" });
+      copy.append(kicker, title, claim, orient, prose);
+
+      const split = el("div", { className: "module-split" });
+      split.append(copy, vizPane);
+      root.append(split);
     }
 
     update();
 
     return {
       reset: function () {
-        slider.value = "4";
+        slider.value = "0";
         takeaway.reset();
         if (further && further.tagName === "DETAILS") further.open = false;
         update();

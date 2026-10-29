@@ -94,8 +94,8 @@
     const guided = variant === "b";
     root.innerHTML = "";
 
-    root.append(el("p", { className: "chapter-kicker", text: "Module 1 of 3" }));
-    root.append(el("h1", { text: "Looking perfect on old data" }));
+    const kicker = el("p", { className: "chapter-kicker", text: "Module 1 of 3" });
+    const title = el("h1", { text: "Looking perfect on old data" });
 
     // Claim text shared by both layouts (Isla / grade predictor)
     const claimHtml =
@@ -293,6 +293,7 @@
 
     if (guided) {
       // Variant B: vertical workbook — instruct → try → notice → conclude
+      root.append(kicker, title);
       const flow = el("div", { className: "guided-flow" });
 
       const step1 = el("section", { className: "guided-step" });
@@ -381,18 +382,15 @@
 
       root.append(flow);
     } else {
-      // Variant A: Seeing Theory rhythm — teaching text left, dark stage right
+      // Variant A: Seeing Theory — left copy column + right stage (both scale)
       const claim = el("div", { className: "claim" });
       claim.innerHTML = claimHtml;
-      root.append(claim);
 
       const orient = el("p", {
         className: "lede",
         text: "Drag the slider. Watch the two fit numbers move in opposite directions — then decide what Isla should do.",
       });
-      root.append(orient);
 
-      const lesson = el("div", { className: "lesson" });
       const prose = el("div", { className: "prose" });
       prose.append(
         el("p", {
@@ -417,8 +415,12 @@
         );
       }
 
-      lesson.append(prose, vizPane);
-      root.append(lesson);
+      const copy = el("div", { className: "module-copy" });
+      copy.append(kicker, title, claim, orient, prose);
+
+      const split = el("div", { className: "module-split" });
+      split.append(copy, vizPane);
+      root.append(split);
     }
 
     // ----- Canvas drawing + live updates -----

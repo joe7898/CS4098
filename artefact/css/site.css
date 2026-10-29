@@ -265,48 +265,26 @@ h1 {
 }
 
 /* ---------------------------------------------------------------------------
-   Graph-first split: prose | dark stage
+   Graph-first split: copy | dark stage
    Seeing Theory rhythm: ~40% text / ~60% stage, both scale with the window
    --------------------------------------------------------------------------- */
-.lesson {
+.module-split {
   display: grid;
   gap: 1.75rem 2.25rem;
   align-items: start;
 }
 
+.module-copy {
+  min-width: 0;
+}
+
 @media (min-width: 900px) {
-  /*
-   * Module host (main > div) is the ST-style 40/60 grid.
-   * display:contents on .lesson lets prose + stage join that grid with the title/claim.
-   */
-  .variant-a main > div:has(.lesson) {
-    display: grid;
+  .variant-a .module-split {
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     column-gap: clamp(1.25rem, 3vw, 3rem);
-    align-items: start;
   }
 
-  .variant-a main > div:has(.lesson) > .chapter-kicker,
-  .variant-a main > div:has(.lesson) > h1,
-  .variant-a main > div:has(.lesson) > .claim,
-  .variant-a main > div:has(.lesson) > .lede {
-    grid-column: 1;
-    max-width: none;
-    width: 100%;
-  }
-
-  .variant-a .lesson {
-    display: contents;
-  }
-
-  .variant-a .lesson .prose {
-    grid-column: 1;
-    min-width: 0;
-  }
-
-  .variant-a .lesson .viz-pane {
-    grid-column: 2;
-    grid-row: 1 / -1;
+  .variant-a .module-split .viz-pane {
     position: sticky;
     top: 4.25rem;
     align-self: start;
@@ -315,20 +293,29 @@ h1 {
   }
 
   /* Text fills the left column as it grows — no fixed rem ceiling */
-  .variant-a .prose p,
-  .variant-a .prose ul,
-  .variant-a .prose ol,
-  .variant-a .takeaway,
-  .variant-a .choice-feedback,
-  .variant-a .further {
+  .variant-a .module-copy .claim,
+  .variant-a .module-copy .lede,
+  .variant-a .module-copy .prose p,
+  .variant-a .module-copy .prose ul,
+  .variant-a .module-copy .prose ol,
+  .variant-a .module-copy .takeaway,
+  .variant-a .module-copy .choice-feedback,
+  .variant-a .module-copy .further {
     max-width: none;
   }
 }
 
 @media (max-width: 899px) {
-  .variant-a .lesson .viz-pane {
+  .variant-a .module-split .viz-pane {
     order: -1;
   }
+}
+
+/* Kept for any residual lesson wrappers */
+.lesson {
+  display: grid;
+  gap: 1.75rem 2.25rem;
+  align-items: start;
 }
 
 .prose p {
@@ -1025,8 +1012,114 @@ h1 {
 }
 
 /* ---------------------------------------------------------------------------
-   Module 3: score + uncertainty band on stage
+   Module 3: badge → band + decision flip on stage
    --------------------------------------------------------------------------- */
+
+/* Fake product chrome — lone confidence badge (misleading start state) */
+.badge-chrome {
+  background: var(--stage-2);
+  border: 1px solid #2a333c;
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.badge-chrome.is-honest {
+  border-color: rgba(77, 163, 255, 0.45);
+}
+
+.badge-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-muted);
+  font-weight: 600;
+}
+
+.badge-draft {
+  margin: 0 0 0.75rem;
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  color: var(--stage-text);
+  line-height: 1.45;
+}
+
+.confidence-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  padding: 0.55rem 0.85rem 0.6rem;
+  background: #0e1216;
+  border: 1px solid #3a4550;
+  border-radius: var(--radius);
+}
+
+.confidence-badge-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-muted);
+  font-weight: 600;
+}
+
+.confidence-badge-num {
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: var(--blue);
+  line-height: 1.1;
+}
+
+.badge-note {
+  margin: 0.65rem 0 0;
+  font-size: 0.8rem;
+  color: var(--stage-muted);
+}
+
+/* Decision hero — accept vs flip when low end < 75 */
+.decision-hero {
+  background: var(--stage-2);
+  border: 1px solid #2a333c;
+  border-radius: var(--radius);
+  padding: 0.75rem 0.85rem 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.decision-rule {
+  margin: 0 0 0.35rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-muted);
+  font-weight: 600;
+}
+
+.decision-verdict {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--stage-text);
+  line-height: 1.25;
+}
+
+.decision-verdict[data-state="accept"] {
+  color: var(--green);
+}
+
+.decision-verdict[data-state="flip"] {
+  color: var(--red);
+}
+
+.decision-explain {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--stage-muted);
+  line-height: 1.45;
+}
+
 .score-line {
   position: relative;
   height: 78px;
@@ -1054,6 +1147,16 @@ h1 {
   border: 1px solid rgba(77, 163, 255, 0.45);
 }
 
+.score-threshold {
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  width: 0;
+  border-left: 1px dashed rgba(255, 107, 90, 0.85);
+  margin-left: 0;
+  z-index: 1;
+}
+
 .score-point {
   position: absolute;
   top: 16%;
@@ -1061,6 +1164,7 @@ h1 {
   width: 3px;
   margin-left: -1.5px;
   background: #fff;
+  z-index: 2;
 }
 
 .score-point-label {
@@ -1070,6 +1174,7 @@ h1 {
   font-size: 0.7rem;
   font-weight: 600;
   color: #fff;
+  z-index: 2;
 }
 
 .score-labels {
@@ -1077,6 +1182,11 @@ h1 {
   justify-content: space-between;
   font-size: 0.7rem;
   color: var(--stage-muted);
+}
+
+.score-labels .thresh-lab {
+  color: var(--red);
+  font-weight: 500;
 }
 
 .next-module {
