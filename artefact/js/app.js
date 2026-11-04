@@ -85,9 +85,11 @@
       '<div class="home-intro">' +
       '<p class="chapter-kicker">Three modules</p>' +
       "<h1>Calibrated trust in numbers</h1>" +
-      '<p class="lede">When should you trust a score, question it, or reject the claim behind it?</p>' +
-      "<p>Each module starts from an everyday claim, lets you change a control and see what happens, then asks for a clear judgement. " +
-      "Use <em>Graph-first</em> for a short session, or <em>More guidance</em> for a slower, textbook-style path.</p>" +
+      '<p class="lede">The aim is not to increase trust in AI. It is calibrated trust: knowing when to trust, question, or reject a metric claim.</p>' +
+      "<p>Each module starts from an everyday numbered claim, then a short interactive graph or count display. " +
+      "Success is being able to say, in plain words, what the figure showed and when you would trust, question, or reject a similar claim. " +
+      "Use <em>Graph-first</em> for a short session, or <em>More guidance</em> for a slower step-by-step path. " +
+      "Precise terms sit under Going further.</p>" +
       "</div>";
 
     // Chapter cards — same three ideas as the report modules
@@ -137,12 +139,6 @@
 
     wrap.append(list);
 
-    const aside = document.createElement("p");
-    aside.className = "home-aside";
-    aside.textContent =
-      "No account · No chatbot · Precise terms appear after the plain takeaway.";
-    wrap.append(aside);
-
     els.main.append(wrap);
   }
 
@@ -188,6 +184,9 @@
       state.route === "home"
         ? "Calibrated trust in numbers"
         : window.CS4098.modules[state.route].title;
+
+    // Helps CSS quiet unused nav links on module pages
+    els.body.setAttribute("data-route", state.route);
 
     window.scrollTo(0, 0);
   }

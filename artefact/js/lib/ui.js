@@ -1,8 +1,9 @@
 /**
  * Author: Omar Raza
  * Student ID: 230013491
- * Description: Small shared helpers used by every module — create elements,
- * build the trust/question/reject takeaway block, and a “next module” link.
+ * Description: Shared helpers for every module — DOM create, takeaway chips,
+ * next-module link, Graph-first orient gate, deferred takeaway, outcome flash,
+ * and mobile stage expand. Modules and the shell read these via CS4098.ui.
  */
 
 (function (global) {
@@ -63,7 +64,7 @@
       "</p>" +
       '<p class="note">' +
       (opts.prompt ||
-        "What would you do with this claim? Pick one — each choice gets a clear response.") +
+        "Would you trust, question, or reject this claim? Each choice gets a short response.") +
       "</p>";
 
     const choices = el("div", {
@@ -148,11 +149,275 @@
     return p;
   }
 
-  // Expose on a single namespace used by modules and the shell
+  // ---------------------------------------------------------------------------
+  // Graph-first orient gate: stage visible, control inactive until one advance
+  // (report Design: orient before interact)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * opts.controls — inputs to disable while locked
+   * opts.mountNear — insert the CTA immediately before this node
+   * opts.stage — optional viz pane; gets class orient-locked while locked
+   * opts.buttonLabel — default "Try the chart"
+   * opts.hint — short line above the button
+   * opts.onUnlock — optional callback after unlock
+   *
+   * Returns { lock, unlock, isLocked }.
+   */
+  function applyOrientGate(opts) {
+    const controls = Array.prototype.slice.call(opts.controls || []);
+    const mountNear = opts.mountNear;
+    const stage = opts.stage || null;
+    const label = opts.buttonLabel || "Try the chart";
+    let locked = true;
+
+    const bar = el("div", {
+      className: "orient-gate",
+      attrs: { role: "region", "aria-label": "Try the interactive chart" },
+    });
+    const hint = el("p", {
+      className: "orient-gate-hint",
+      text:
+        opts.hint ||
+        "Read the claim first. The chart is a preview until you press Try the chart.",
+    });
+    const btn = el("button", {
+      type: "button",
+      className: "orient-gate-btn",
+      text: label,
+    });
+    bar.append(hint, btn);
+
+    function setControlsDisabled(disabled) {
+      controls.forEach(function (c) {
+        if (!c) return;
+        c.disabled = !!disabled;
+        if (disabled) c.setAttribute("aria-disabled", "true");
+        else c.removeAttribute("aria-disabled");
+      });
+    }
+
+    function lock() {
+      locked = true;
+      setControlsDisabled(true);
+      bar.hidden = false;
+      if (stage) stage.classList.add("orient-locked");
+    }
+
+    function unlock() {
+      locked = false;
+      setControlsDisabled(false);
+      bar.hidden = true;
+      if (stage) stage.classList.remove("orient-locked");
+      if (controls[0] && typeof controls[0].focus === "function") {
+        try {
+          controls[0].focus();
+        } catch (e) {
+          /* ignore */
+        }
+      }
+      if (typeof opts.onUnlock === "function") opts.onUnlock();
+    }
+
+    btn.addEventListener("click", function () {
+      unlock();
+    });
+
+    if (mountNear && mountNear.parentNode) {
+      mountNear.parentNode.insertBefore(bar, mountNear);
+    }
+
+    lock();
+
+    return {
+      lock: lock,
+      unlock: unlock,
+      isLocked: function () {
+        return locked;
+      },
+      el: bar,
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Graph-first flow: hide takeaway until first chart use (Design order)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Defer judgement UI until after Try the chart + first meaningful interact.
+   * Shows a short placeholder so the path stays clear.
+   */
+  function deferTakeawayUntilInteract(takeawayEl, opts) {
+    opts = opts || {};
+    const alsoHide = opts.alsoHide || [];
+    const placeholder = el("p", {
+      className: "flow-next-hint",
+      text:
+        opts.hint ||
+        "After you try the chart, you’ll decide trust, question, or reject here.",
+    });
+    let revealed = false;
+
+    function setDeferred(node, deferred) {
+      if (!node) return;
+      if (deferred) {
+        node.classList.add("is-flow-deferred");
+        node.setAttribute("aria-hidden", "true");
+      } else {
+        node.classList.remove("is-flow-deferred");
+        node.removeAttribute("aria-hidden");
+      }
+    }
+
+    function hideAll() {
+      setDeferred(takeawayEl, true);
+      alsoHide.forEach(function (node) {
+        setDeferred(node, true);
+      });
+    }
+
+    function showAll() {
+      setDeferred(takeawayEl, false);
+      alsoHide.forEach(function (node) {
+        setDeferred(node, false);
+      });
+    }
+
+    if (takeawayEl && takeawayEl.parentNode) {
+      hideAll();
+      takeawayEl.parentNode.insertBefore(placeholder, takeawayEl);
+    }
+
+    function reveal() {
+      if (revealed) return;
+      revealed = true;
+      if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+      showAll();
+    }
+
+    function reset() {
+      revealed = false;
+      hideAll();
+      if (placeholder.parentNode == null && takeawayEl && takeawayEl.parentNode) {
+        takeawayEl.parentNode.insertBefore(placeholder, takeawayEl);
+      }
+    }
+
+    return { reveal: reveal, reset: reset, isRevealed: function () { return revealed; } };
+  }
+
+  function flashOutcome(outcomeEl) {
+    if (!outcomeEl) return;
+    outcomeEl.classList.remove("is-outcome-flash");
+    // reflow so the animation can re-trigger
+    void outcomeEl.offsetWidth;
+    outcomeEl.classList.add("is-outcome-flash");
+  }
+
+  // ---------------------------------------------------------------------------
+  // Mobile: expand stage to (near) full viewport without breaking listeners
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Adds Expand chart / Close chart on a viz pane. Uses a fixed overlay +
+   * placeholder so the page does not jump; Escape closes. Desktop hides the
+   * control via CSS — dual-column scroll handles large screens instead.
+   */
+  function attachStageExpand(stage) {
+    if (!stage || stage.getAttribute("data-expand-ready") === "1") return;
+    stage.setAttribute("data-expand-ready", "1");
+
+    const bar = el("div", { className: "stage-expand-bar" });
+    const btn = el("button", {
+      type: "button",
+      className: "stage-expand-btn",
+      text: "Expand chart",
+      attrs: {
+        "aria-expanded": "false",
+        "aria-controls": stage.id || undefined,
+      },
+    });
+    bar.appendChild(btn);
+    stage.insertBefore(bar, stage.firstChild);
+
+    let placeholder = null;
+
+    function expanded() {
+      return stage.classList.contains("viz-pane--expanded");
+    }
+
+    function collapse() {
+      if (!expanded()) return;
+      stage.classList.remove("viz-pane--expanded");
+      document.body.classList.remove("stage-expanded");
+      btn.textContent = "Expand chart";
+      btn.setAttribute("aria-expanded", "false");
+      if (placeholder && placeholder.parentNode) {
+        placeholder.parentNode.removeChild(placeholder);
+      }
+      placeholder = null;
+    }
+
+    function expand() {
+      if (expanded()) return;
+      placeholder = document.createElement("div");
+      placeholder.className = "viz-pane-placeholder";
+      placeholder.style.height = stage.offsetHeight + "px";
+      placeholder.setAttribute("aria-hidden", "true");
+      if (stage.parentNode) {
+        stage.parentNode.insertBefore(placeholder, stage);
+      }
+      stage.classList.add("viz-pane--expanded");
+      document.body.classList.add("stage-expanded");
+      btn.textContent = "Close chart";
+      btn.setAttribute("aria-expanded", "true");
+      try {
+        btn.focus();
+      } catch (err) {
+        /* ignore */
+      }
+    }
+
+    btn.addEventListener("click", function () {
+      if (expanded()) collapse();
+      else expand();
+    });
+
+    function onKey(e) {
+      if (e.key === "Escape") collapse();
+    }
+
+    function onResize() {
+      // Crossing to desktop dual-scroll: drop overlay
+      if (window.matchMedia("(min-width: 900px)").matches) collapse();
+    }
+
+    document.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+
+    const obs = new MutationObserver(function () {
+      if (!document.body.contains(stage)) {
+        collapse();
+        document.removeEventListener("keydown", onKey);
+        window.removeEventListener("resize", onResize);
+        obs.disconnect();
+      }
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Register helpers on CS4098.ui (modules and shell)
+  // ---------------------------------------------------------------------------
+
   global.CS4098 = global.CS4098 || {};
   global.CS4098.ui = {
     el: el,
     buildTakeaway: buildTakeaway,
     nextModule: nextModule,
+    applyOrientGate: applyOrientGate,
+    deferTakeawayUntilInteract: deferTakeawayUntilInteract,
+    flashOutcome: flashOutcome,
+    attachStageExpand: attachStageExpand,
   };
 })(window);

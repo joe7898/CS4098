@@ -18,7 +18,8 @@
   --stage: #12161a;
   --stage-2: #1a2026;
   --stage-text: #e8eef2;
-  --stage-muted: #9aa8b4;
+  /* Brighter muted labels on the dark stage (legend / meters / axis) */
+  --stage-muted: #b7c4cf;
   --accent: #2f6f8f;
   --accent-soft: #d5e6ef;
   --claim-bg: #eef4f8;
@@ -138,7 +139,8 @@ a:hover {
 }
 
 .site-nav a {
-  color: var(--muted);
+  /* Idle nav must stay ≥4.5:1 on --paper (Lighthouse / WCAG AA) */
+  color: #3a4853;
   text-decoration: none;
   padding: 0.35rem 0.65rem;
   border-radius: 999px;
@@ -278,18 +280,81 @@ h1 {
   min-width: 0;
 }
 
+/* Graph-first: stack wraps claim + takeaway for a tight left column on desktop.
+   On mobile, display:contents lets us place claim → chart → takeaway. */
+.module-copy-stack {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Shared thin scrollbars for dual-pane desktop */
+.module-copy-stack,
+.module-split > .viz-pane {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted) 45%, transparent) transparent;
+}
+
 @media (min-width: 900px) {
+  /* Independent column scroll: fill viewport under sticky header */
+  .variant-a:has(.module-split) {
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .variant-a:has(.module-split) .site-frame {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .variant-a:has(.module-split) .site-footer {
+    display: none;
+  }
+
+  .variant-a:has(.module-split) main {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+    padding: 0;
+  }
+
+  /* Fill main under the header; each column scrolls inside this box */
   .variant-a .module-split {
+    position: absolute;
+    inset: 0.85rem var(--frame-pad) 0.85rem;
+    min-height: 0;
+    overflow: hidden;
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-rows: minmax(0, 1fr);
     column-gap: clamp(1.25rem, 3vw, 3rem);
+    align-items: stretch;
+  }
+
+  .variant-a .module-split .module-copy-stack {
+    grid-column: 1;
+    grid-row: 1;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 0.4rem;
   }
 
   .variant-a .module-split .viz-pane {
-    position: sticky;
-    top: 4.25rem;
-    align-self: start;
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    top: auto;
+    align-self: stretch;
     width: 100%;
     min-width: 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   /* Text fills the left column as it grows — no fixed rem ceiling */
@@ -306,9 +371,180 @@ h1 {
 }
 
 @media (max-width: 899px) {
-  .variant-a .module-split .viz-pane {
-    order: -1;
+  .variant-a .module-split {
+    grid-template-columns: minmax(0, 1fr);
   }
+
+  /* Flatten stack so claim / chart / takeaway can be ordered in flow */
+  .variant-a .module-split .module-copy-stack {
+    display: contents;
+  }
+
+  .variant-a .module-split .module-copy--above {
+    grid-row: 1;
+  }
+
+  .variant-a .module-split .viz-pane {
+    grid-row: 2;
+  }
+
+  .variant-a .module-split .module-copy--below {
+    grid-row: 3;
+  }
+}
+
+/* Mobile expand-chart control (hidden on desktop dual-scroll layout) */
+.stage-expand-bar {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .stage-expand-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 0.65rem;
+  }
+
+  .stage-expand-btn {
+    appearance: none;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--stage-text);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.4rem 0.7rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+
+  .stage-expand-btn:hover,
+  .stage-expand-btn:focus-visible {
+    background: rgba(77, 163, 255, 0.18);
+    border-color: color-mix(in srgb, var(--blue) 55%, transparent);
+    outline: none;
+  }
+
+  .viz-pane-placeholder {
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .viz-pane--expanded {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+    padding: max(0.75rem, env(safe-area-inset-top))
+      max(0.85rem, env(safe-area-inset-right))
+      max(0.85rem, env(safe-area-inset-bottom))
+      max(0.85rem, env(safe-area-inset-left));
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .viz-pane--expanded.viz-pane--compact {
+    max-width: none;
+  }
+
+  .viz-pane--expanded canvas {
+    max-height: none;
+  }
+
+  body.stage-expanded {
+    overflow: hidden;
+  }
+
+  body.stage-expanded .site-header {
+    /* Keep header tappable under overlay? No — chart owns the screen */
+    visibility: hidden;
+  }
+}
+
+/* Graph-first: takeaway waits until first chart use */
+.is-flow-deferred {
+  display: none !important;
+}
+
+.flow-next-hint {
+  margin: 1rem 0 0;
+  padding: 0.75rem 0.85rem;
+  border-left: 3px solid var(--blue);
+  background: color-mix(in srgb, var(--blue) 8%, #fff);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* Short “why these numbers / this control” notes on the stage */
+.param-note {
+  margin: 0 0 0.85rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #2a333c;
+  border-left: 3px solid var(--blue);
+  background: #12171c;
+  color: #c5d0da;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.param-note strong {
+  color: #e8eef4;
+  font-weight: 600;
+}
+
+/* Paper-tint notes only when the note sits in the light guided copy column.
+   Notes inside .viz-pane stay on the dark stage palette (see below). */
+.guided-flow > .guided-step > .param-note,
+.guided-flow .module-copy .param-note {
+  background: color-mix(in srgb, var(--blue) 6%, #fff);
+  border-color: color-mix(in srgb, var(--blue) 25%, var(--rule));
+  color: var(--muted);
+}
+
+.guided-flow > .guided-step > .param-note strong,
+.guided-flow .module-copy .param-note strong {
+  color: var(--ink);
+}
+
+.guided-flow .viz-pane .param-note {
+  background: #12171c;
+  border-color: #2a333c;
+  border-left-color: var(--blue);
+  color: #c5d0da;
+}
+
+.guided-flow .viz-pane .param-note strong,
+.guided-flow .viz-pane .param-note em {
+  color: #e8eef4;
+}
+
+.outcome-summary.is-outcome-flash {
+  animation: outcomeFlash 1.1s ease;
+}
+
+@keyframes outcomeFlash {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--blue) 45%, transparent);
+  }
+  40% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 28%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* Quieter module chrome via weight, not opacity (opacity broke contrast) */
+body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
+  font-weight: 450;
 }
 
 /* Kept for any residual lesson wrappers */
@@ -382,12 +618,27 @@ h1 {
   border-radius: var(--radius);
 }
 
+/* More guidance used to shrink the stage to a narrow card; keep it full-bleed
+   within main (prose still uses --measure). Soft height floor on wide screens. */
 .viz-pane--compact {
-  max-width: min(34rem, 100%);
+  max-width: none;
+  width: 100%;
 }
 
 .viz-pane--compact canvas {
-  max-height: 260px;
+  max-height: none;
+}
+
+@media (min-width: 900px) {
+  .variant-b .viz-pane--compact {
+    /* Tall stage band so the chart reads as a full-width panel, not a card */
+    padding: clamp(1.1rem, 2vw, 1.6rem);
+  }
+
+  .variant-b .viz-pane--compact canvas {
+    width: 100%;
+    height: auto;
+  }
 }
 
 .compare-strip {
@@ -445,7 +696,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 0.65rem 1.1rem;
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   color: var(--stage-muted);
   margin: 0.55rem 0 0.2rem;
 }
@@ -529,11 +780,61 @@ h1 {
   accent-color: var(--blue);
 }
 
+/* Graph-first: stage preview OK; primary control inactive until Try the chart */
+.orient-gate {
+  margin: 0.85rem 0 0.35rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.orient-gate-hint {
+  margin: 0 0 0.55rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--stage-muted);
+}
+
+.orient-gate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  /* Darker than --blue so white label meets contrast on the stage CTA */
+  background: #1f6fbf;
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.orient-gate-btn:hover,
+.orient-gate-btn:focus-visible {
+  filter: brightness(1.08);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Dim only the widgets — not labels/live text (opacity was failing contrast) */
+.viz-pane.orient-locked .control input,
+.viz-pane.orient-locked .field input {
+  opacity: 0.45;
+}
+
+.viz-pane.orient-locked .control,
+.viz-pane.orient-locked .field {
+  pointer-events: none;
+}
+
 .drag-prompt {
   margin: 0.35rem 0 0;
   font-size: 0.82rem;
   font-weight: 500;
-  color: var(--blue);
+  color: #9ec9ff;
 }
 
 .live {
@@ -764,23 +1065,44 @@ h1 {
   line-height: 1.45;
 }
 
-.home-aside {
-  margin-top: 2rem;
-  max-width: min(48rem, 100%);
-  font-size: 0.88rem;
-  color: var(--muted);
-}
-
 /* ---------------------------------------------------------------------------
-   More guidance: workbook steps (still airy)
+   More guidance: workbook steps (full main width; readable prose measure)
    --------------------------------------------------------------------------- */
 .guided-flow {
-  /* Grows with the window (Seeing Theory–style), not a hard rem stop */
-  max-width: min(56rem, 100%);
+  max-width: none;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.25rem;
+}
+
+/* More guidance: full main width for prose and stage (match Graph-first frame).
+   Override global --measure caps on claim / takeaway / further / etc. */
+.variant-b .guided-flow,
+.variant-b .guided-step,
+.variant-b main > .chapter-kicker,
+.variant-b main > h1,
+.variant-b .lede,
+.variant-b .claim,
+.variant-b .prose p,
+.variant-b .prose ul,
+.variant-b .prose ol,
+.variant-b .takeaway,
+.variant-b .choice-feedback,
+.variant-b .further,
+.variant-b .further-block,
+.variant-b .further-block p,
+.variant-b .further-block h2,
+.variant-b .further-block h3,
+.variant-b .next-module,
+.variant-b .guided-step > .step-label,
+.variant-b .guided-step > h2,
+.variant-b .guided-step > h3,
+.variant-b .guided-step > p,
+.variant-b .guided-step > ol,
+.variant-b .guided-step > ul {
+  max-width: none;
+  width: 100%;
 }
 
 .guided-step .step-label {
@@ -807,6 +1129,53 @@ h1 {
   color: var(--ink);
 }
 
+/*
+  More guidance nests the dark stage inside .guided-step. The prose rule above
+  would paint legend / live / badge copy with paper ink (#243039) on #12161a
+  (contrast ~1.3). Reset stage paragraphs to inherit the stage palette.
+*/
+.guided-step .viz-pane p {
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: inherit;
+  line-height: 1.45;
+  color: inherit;
+  margin: 0 0 0.45rem;
+}
+
+.guided-step .viz-pane {
+  color: var(--stage-text);
+}
+
+.guided-step .viz-pane .legend,
+.guided-step .viz-pane .axis-caption,
+.guided-step .viz-pane .meter,
+.guided-step .viz-pane .compare-label,
+.guided-step .viz-pane .badge-kicker,
+.guided-step .viz-pane .badge-note,
+.guided-step .viz-pane .decision-rule,
+.guided-step .viz-pane .field label,
+.guided-step .viz-pane .confidence-badge-label,
+.guided-step .viz-pane .score-labels {
+  color: var(--stage-muted);
+}
+
+.guided-step .viz-pane .live,
+.guided-step .viz-pane .badge-draft,
+.guided-step .viz-pane .decision-explain,
+.guided-step .viz-pane .compare-num,
+.guided-step .viz-pane .meter .val {
+  color: var(--stage-text);
+}
+
+.guided-step .viz-pane .drag-prompt {
+  color: #9ec9ff;
+}
+
+.guided-step .viz-pane .param-note {
+  color: #c5d0da;
+  font-size: 0.86rem;
+}
+
 .guided-step ol {
   margin: 0 0 1rem;
   padding-left: 1.25rem;
@@ -826,6 +1195,23 @@ h1 {
   font-family: var(--serif);
   font-size: 1.05rem;
   line-height: 1.55;
+}
+
+/* Graph-first: outcome lives on the dark stage */
+.viz-pane > .outcome-summary {
+  background: #12171c;
+  border: 1px solid #2a333c;
+  border-left: 2px solid var(--blue);
+  color: #e8eef4;
+}
+
+.viz-pane > .outcome-summary .outcome-label {
+  color: #9aa8b5;
+}
+
+.viz-pane > .outcome-summary p {
+  margin: 0;
+  color: #d5dee6;
 }
 
 .outcome-summary .outcome-label {

@@ -1,0 +1,25 @@
+<!--
+  Author: Omar Raza
+  Student ID: 230013491
+  Description: Lighthouse / audit trampoline. Forces More guidance (Variant B)
+  in localStorage, then redirects into the main shell at the requested hash.
+  Not part of the learner-facing product path.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Audit trampoline — More guidance</title>
+  <script>
+    // Set Variant B before the shell reads localStorage, then enter index.html
+    localStorage.setItem("cs4098-variant", "b");
+    var target = new URLSearchParams(location.search).get("to") || "#fit";
+    location.replace("index.html?v=flow15" + target);
+  </script>
+</head>
+<body>
+  <!-- Brief fallback if the redirect is slow -->
+  <p>Redirecting to More guidance…</p>
+</body>
+</html>

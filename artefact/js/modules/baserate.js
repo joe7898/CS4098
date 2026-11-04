@@ -50,9 +50,9 @@
     const kicker = el("p", { className: "chapter-kicker", text: "Module 2 of 3" });
     const title = el("h1", { text: "When a high accuracy still misleads" });
 
-    // Claim text shared by both layouts (Claire / news headline)
+    // Claim text shared by both layouts (Claire / “99% accurate” headline)
     const claimHtml =
-      '<span class="label">Baseline example (Claire)</span>' +
+      '<span class="label">Example — Claire</span>' +
       "<p>Claire reads a news story: an AI tool “detects illness with <strong>99% accuracy</strong>.” " +
       "The headline invites this reading: if <em>her</em> result were positive, she should treat it as almost certainly true — " +
       "without saying how rare the illness is among people like her.</p>";
@@ -60,32 +60,32 @@
     // ----- Takeaway + trust / question / reject -----
     const takeaway = buildTakeaway({
       verdictHtml:
-        "<strong>Do not read “99% accurate” as “99% chance you have it.”</strong> " +
-        "Those are different questions. When the condition is rare, false alarms can outnumber true positives — " +
-        "so the careful response is to <strong>question</strong> the leap from accuracy to “almost certainly yes,” " +
-        "and to <strong>reject</strong> any claim that the accuracy percentage alone answers Claire’s personal risk.",
+        "<strong>A high accuracy percentage is not, by itself, a reason to trust a positive claim without asking about the base rate.</strong> " +
+        "“99% accurate” and “99% chance you have it” are different questions. When the condition is rare, false alarms can outnumber true positives — " +
+        "so <strong>question</strong> the leap from the headline to “almost certainly yes,” " +
+        "and <strong>reject</strong> any claim that the accuracy percentage alone answers Claire’s personal risk.",
       judgement: {
         trust: {
           tone: "miscalibrated",
           title: "Trust — too strong for the headline alone",
           body:
-            "If Claire trusts “almost certainly yes” because the tool is 99% accurate, she is treating sensitivity-style accuracy as if it were positive predictive value. " +
-            "Look at the tree: with rarity 1 in 200 and 99% accuracy, most positive tests can still be false alarms (about 33% true in the default setting). " +
-            "<strong>Calibrated alternative:</strong> question the headline until the base rate (and counts) are in view.",
+            "If Claire trusts “almost certainly yes” because the tool is 99% accurate, she is treating one kind of accuracy as if it answered a different question. " +
+            "On the tree, with rarity 1 in 200 and 99% accuracy, many positive tests can still be false alarms. " +
+            "Question the headline until the base rate — and the counts — are in view.",
         },
         question: {
           tone: "calibrated",
           title: "Question — the calibrated response",
           body:
             "This matches what the counts show. “How often is the test right when the condition is present?” is not the same as “If I tested positive, how likely is the condition?” " +
-            "<strong>One sentence Claire can use:</strong> “99% accurate still isn’t enough — I need to know how rare it is, and how many false alarms that creates.”",
+            "Ask how rare the condition is, and how many false alarms that creates among the people who do not have it.",
         },
         reject: {
           tone: "calibrated",
           title: "Reject — right for the overclaim",
           body:
-            "Reject the implication that accuracy alone settles a positive result. You are not rejecting every screening tool; you are rejecting that wording as sufficient proof. " +
-            "<strong>One sentence Claire can use:</strong> “I reject reading 99% accuracy as the chance a positive result is true when rarity isn’t stated.”",
+            "Reject the implication that accuracy alone settles a positive result. " +
+            "That does not mean rejecting every screening tool; it means rejecting that wording as enough proof when rarity is not stated.",
         },
       },
     });
@@ -96,28 +96,31 @@
       "<p><span class=\"math\">Sensitivity</span> asks: if the condition is present, how often is the test positive? Headlines often call something like this “accuracy.”</p>" +
       "<p><span class=\"math\">Positive predictive value (PPV)</span> asks: if the test is positive, how often is the condition present?</p>" +
       '<p class="formula">PPV = true positives ÷ (true positives + false positives)</p>' +
-      "<h3>Why rarity matters</h3>" +
-      "<p>When almost nobody has the condition, even a small false-alarm rate among the many healthy people creates many false positives. Those can outnumber the true ones.</p>" +
+      "<h3>Why rarity and accuracy both matter</h3>" +
+      "<p>When almost nobody has the condition, even a small false-alarm rate among the many healthy people creates many false positives. Those can outnumber the true ones — so PPV falls even if “accuracy” stays high. " +
+      "Lowering the accuracy slider increases misses and false alarms in this short model, which also moves PPV. Try both controls; they are different levers on the same tree.</p>" +
+      "<h3>Natural frequencies (why a tree out of 1,000)</h3>" +
+      "<p>Gigerenzer, Hoffrage and colleagues show that many probability problems become easier when information is written as counts in a fixed reference class (for example out of 1,000 people) rather than as bare percentages. " +
+      "The tree follows that format so false alarms stay visible.</p>" +
       "<h3>Bayes’ rule (same counts)</h3>" +
       '<p class="formula">P(C | +) = P(+ | C) P(C) / P(+)</p>' +
-      "<p>The frequency tree computes that quantity by counting. This module sets the “clear negative” rate equal to the accuracy slider for a short story; real tests can differ.</p>";
+      "<p>The frequency tree computes that quantity by counting. This module sets the “clear negative” rate equal to the accuracy slider for a short story; real tests can differ on sensitivity vs specificity.</p>" +
+      "<h3>Why the defaults are 99% and 1 in 200</h3>" +
+      "<p>99% matches Claire’s headline wording. 1 in 200 is an illustrative rare-condition setting (not a cited prevalence for a real illness) chosen so that, at high accuracy, false alarms can already outnumber true positives — the classic base-rate punchline in count form.</p>";
 
     // Longer chapter notes (More guidance, shown in full)
     const furtherGuided =
-      "<p>This is the textbook-style continuation of Claire’s headline. The short path above is enough to decide; these notes name the quantities properly.</p>" +
+      "<p>Optional detail for keen readers. The short path above is enough for a calibrated takeaway; these notes name the quantities properly.</p>" +
       furtherShort +
-      "<h3>Natural frequencies</h3>" +
-      "<p>Gigerenzer, Hoffrage and colleagues argue that many “probability problems” get easier when information is written as counts in a fixed reference class — " +
-      "for example out of 1,000 people — rather than as bare percentages or nested conditionals. " +
-      "The tree on this page is that format: you can follow how many people have the condition, how many test positive, and how many of those positives are true.</p>" +
       "<h3>Back to Claire</h3>" +
       "<p>A news percentage answers a performance question about the test. Claire’s worry is a predictive question about a positive result. " +
-      "Without the base rate, the second question is underspecified. That is why calibrated trust questions the leap — and rejects accuracy-alone wording as proof.</p>";
+      "Without the base rate, the second question is underspecified. That is why the leap should be questioned — and accuracy-alone wording rejected as proof (Hoffrage et al.; Gigerenzer &amp; Edwards).</p>";
 
     // ----- Interactive stage (sliders, tree, PPV hero) -----
     const vizPane = el("div", {
       className: "viz-pane" + (guided ? " viz-pane--compact" : ""),
     });
+    if (helpers.attachStageExpand) helpers.attachStageExpand(vizPane);
     const prevField = field(el, "How rare is the condition?", "prev", 20, 500, 200, 10);
     const accField = field(el, "How often is the test right?", "acc", 70, 99, 99, 1);
 
@@ -148,7 +151,16 @@
       '<span class="outcome-label">What the counts are saying</span><p></p>';
     const outcomeP = outcomeSummary.querySelector("p");
 
-    vizPane.append(prevField.wrap, accField.wrap, readHint, tree, ppvHero, live);
+    const paramNote = el("p", { className: "param-note" });
+    paramNote.innerHTML =
+      "<strong>Why these controls.</strong> " +
+      "Defaults match the headline mood: <strong>99%</strong> accuracy and rarity <strong>1 in 200</strong> (illustrative, not a real disease rate). " +
+      "Use <em>both</em> sliders: make the condition rarer with accuracy still high, then also lower accuracy — the large percentage (PPV) should move in both cases. " +
+      "Counts follow Gigerenzer/Hoffrage-style natural frequencies out of 1,000.";
+
+    vizPane.append(paramNote, prevField.wrap, accField.wrap, readHint, tree, ppvHero, live);
+
+    // ----- Tree rendering + live count / PPV updates -----
 
     // Paint the frequency tree from current counts
     function renderTree(c) {
@@ -214,6 +226,8 @@
         c.tp +
         ").";
       if (outcomeP) {
+        const levers =
+          " You can move <strong>rarity</strong>, <strong>accuracy</strong>, or both — each changes the counts and the large percentage.";
         if (c.ppv < 40) {
           outcomeP.innerHTML =
             "With rarity <strong>1 in " +
@@ -229,28 +243,32 @@
             c.tp +
             "</strong>). " +
             "So Claire’s headline percentage is <em>not</em> the chance a positive result means she has the condition. " +
-            "That chance is the big figure above — the positive predictive value from the counts.";
+            "That chance is the big figure above — true positives divided by all positives." +
+            levers;
         } else if (c.ppv < 70) {
           outcomeP.innerHTML =
-            "PPV is about <strong>" +
+            "About <strong>" +
             ppv +
-            "%</strong>. Better than a coin flip, but far from “almost certainly.” " +
-            "Try making the condition rarer (higher “1 in …”) and watch false alarms grow among the many people who do not have it.";
+            "%</strong> of positive tests are true. Better than a coin flip, but far from “almost certainly.” " +
+            "Try a rarer condition (higher “1 in …”) with accuracy still high, and try lowering accuracy — watch how false alarms and true positives shift." +
+            levers;
         } else {
           outcomeP.innerHTML =
-            "PPV is about <strong>" +
+            "About <strong>" +
             ppv +
-            "%</strong> with the current rarity. " +
-            "Even here, notice that accuracy (" +
+            "%</strong> of positive tests are true. Notice that accuracy (<strong>" +
             acc +
-            "%) and PPV (" +
+            "%</strong>) and that chance (<strong>" +
             ppv +
-            "%) are not the same number. " +
-            "Drag rarity toward rarer values to see the headline claim break down the way Claire’s story needs.";
+            "%</strong>) are already not the same number. " +
+            "Make the condition rarer while keeping accuracy near 99%, then also drag accuracy down — both should change the large percentage." +
+            levers;
         }
       }
     }
 
+    // Temporary listeners so the tree paints before layout; swapped for
+    // onInteract after the orient gate is wired (see below)
     prevField.input.addEventListener("input", update);
     accField.input.addEventListener("input", update);
 
@@ -265,24 +283,24 @@
       const step1 = el("section", { className: "guided-step" });
       step1.innerHTML =
         '<p class="step-label">Step 1 — Read the claim</p>' +
-        "<h2>What the headline is selling</h2>";
+        "<h2>What the headline claims</h2>";
       const claim = el("div", { className: "claim" });
       claim.innerHTML = claimHtml;
       step1.append(claim);
       step1.append(
         el("p", {
           text:
-            "Separate two questions. Question A: when someone has the illness, how often does the tool flag them? " +
-            "Question B: when the tool flags someone, how often do they actually have the illness? " +
-            "“99% accurate” is aimed at A. Claire’s personal worry is B. Everyday headlines often blur them.",
+            "Separate two questions. When someone has the illness, how often does the tool flag them? " +
+            "When the tool flags someone, how often do they actually have the illness? " +
+            "“99% accurate” is aimed at the first. Claire’s personal worry is the second. Everyday headlines often blur them.",
         })
       );
       step1.append(
         el("p", {
           text:
-            "Part of the difficulty is format. Percentages and nested conditionals are easy to misread. " +
-            "Natural frequencies keep a fixed reference class in view — out of 1,000 people — so you can count false alarms with your eyes. " +
-            "That is the design idea behind tools such as frequency-tree explainers: make the arithmetic hard to skip.",
+            "Percentages and nested conditionals are easy to misread. " +
+            "Counts out of 1,000 people keep a fixed reference class in view, so false alarms stay visible. " +
+            "That is why this page uses a frequency tree rather than a bare percentage.",
         })
       );
       flow.append(step1);
@@ -295,16 +313,17 @@
         "<li><strong>Rarity</strong> sets how many of the 1,000 have the condition (the base rate).</li>" +
         "<li><strong>Accuracy</strong> here means: among those who have it, how often the test is positive — and, in this short module, a matching clear-negative rate among those who do not.</li>" +
         "<li><strong>The tree</strong> splits the 1,000 by condition, then by test result. Read top to bottom.</li>" +
-        "<li><strong>The large percentage</strong> is positive predictive value: true positives ÷ all positives. That is Claire’s question if she tested positive.</li>" +
+        "<li><strong>The large percentage</strong> is the chance a positive is true (true positives ÷ all positives) — Claire’s question if she tested positive.</li>" +
         "</ol>" +
-        "<p>Start from the defaults (99%, 1 in 200) that match the headline mood. Then make the condition rarer and watch the big percentage fall even while “accuracy” stays high.</p>";
+        "<p>Start from the defaults (99%, 1 in 200). First make the condition rarer while accuracy stays high. " +
+        "Then change the accuracy slider too: the large percentage should move when either control changes.</p>";
       flow.append(step2);
 
       const step3 = el("section", { className: "guided-step" });
       step3.innerHTML =
         '<p class="step-label">Step 3 — Try the controls</p>' +
         "<h2>Follow the counts, then read the summary</h2>" +
-        "<p>Change one slider at a time. After each change, read the tree and the written summary — that paragraph is meant to carry the lesson the way a textbook caption would.</p>";
+        "<p>Change one slider at a time. After each change, read the tree and the short summary under it.</p>";
       step3.append(vizPane, outcomeSummary);
       flow.append(step3);
 
@@ -312,14 +331,14 @@
       step4.innerHTML =
         '<p class="step-label">Step 4 — Decide</p>' +
         "<h2>From the tree back to the headline</h2>" +
-        "<p>You should now be able to say why “99% accurate” does not automatically mean “almost certainly yes” for a positive result when the condition is rare. " +
+        "<p>“99% accurate” does not automatically mean “almost certainly yes” for a positive result when the condition is rare. " +
         "Choose trust, question, or reject for Claire’s headline leap.</p>";
       step4.append(takeaway.el);
       flow.append(step4);
 
       further = el("section", { className: "further-block" });
       further.innerHTML =
-        "<h2>Chapter notes — sensitivity, PPV, and Bayes</h2>" + furtherGuided;
+        "<h2>Going further — sensitivity, PPV, and Bayes</h2>" + furtherGuided;
       flow.append(further);
       flow.append(nextModule("#uncertainty", "Module 3 — A single score that hides a range"));
       root.append(flow);
@@ -331,38 +350,89 @@
       const orient = el("p", {
         className: "lede",
         text:
-          "Keep accuracy high and make the condition rarer. Watch the large percentage — that is the chance a positive is true.",
+          "Read Claire’s claim first. Then try the chart: use both sliders. Make the condition rarer with accuracy still high, then also change accuracy — watch the large percentage (chance a positive is true), not the headline.",
       });
 
-      const prose = el("div", { className: "prose" });
-      prose.append(
-        el("p", {
-          className: "lede",
-          text:
-            "Keep accuracy near 99% and make the condition rarer. The large percentage — not the headline — is the chance a positive is true.",
-        })
-      );
-      prose.append(
+      const proseAbove = el("div", { className: "prose" });
+      proseAbove.append(
         el("p", {
           text:
-            "Natural frequencies (counts out of 1,000) make false alarms visible. That is why the tree is the main display, not a formula wall.",
+            "Natural frequencies (counts out of 1,000) make false alarms visible — the format Gigerenzer and Hoffrage recommend over bare percentages. That is why the tree is the main display.",
         })
       );
-      prose.append(takeaway.el);
 
       further = el("details", { className: "further" });
       further.innerHTML =
         "<summary>Going further — the mathematical idea</summary>" + furtherShort;
-      prose.append(further);
-      prose.append(nextModule("#uncertainty", "Module 3 — A single score that hides a range"));
+      const nextEl = nextModule(
+        "#uncertainty",
+        "Module 3 — A single score that hides a range"
+      );
 
-      const copy = el("div", { className: "module-copy" });
-      copy.append(kicker, title, claim, orient, prose);
+      // “What just changed” on the stage — deferred until first interact
+      vizPane.append(outcomeSummary);
+
+      const copyAbove = el("div", {
+        className: "module-copy module-copy--above",
+      });
+      copyAbove.append(kicker, title, claim, orient, proseAbove);
+
+      const copyBelow = el("div", {
+        className: "module-copy module-copy--below",
+      });
+      const proseBelow = el("div", { className: "prose" });
+      proseBelow.append(takeaway.el, further, nextEl);
+      copyBelow.append(proseBelow);
+
+      const copyStack = el("div", { className: "module-copy-stack" });
+      copyStack.append(copyAbove, copyBelow);
 
       const split = el("div", { className: "module-split" });
-      split.append(copy, vizPane);
+      split.append(copyStack, vizPane);
       root.append(split);
+
+      takeaway.el._flowAlsoHide = [further, nextEl, outcomeSummary];
     }
+
+    // Graph-first only: controls inactive until Try the chart (Design orient gate)
+    let orientGate = null;
+    let takeawayFlow = null;
+    let interacted = false;
+    if (!guided && global.CS4098.ui && global.CS4098.ui.applyOrientGate) {
+      orientGate = global.CS4098.ui.applyOrientGate({
+        controls: [prevField.input, accField.input],
+        mountNear: prevField.wrap,
+        stage: vizPane,
+        buttonLabel: "Try the chart",
+        hint: "Read the claim on the left first. The tree is a preview until you press Try the chart.",
+      });
+      if (global.CS4098.ui.deferTakeawayUntilInteract) {
+        takeawayFlow = global.CS4098.ui.deferTakeawayUntilInteract(takeaway.el, {
+          hint: "After you try the chart, you’ll decide trust, question, or reject here.",
+          alsoHide: takeaway.el._flowAlsoHide || [],
+        });
+      }
+    }
+
+    // First interact reveals the deferred takeaway (Graph-first Design order)
+    function onInteract() {
+      if (!guided && orientGate && !orientGate.isLocked()) {
+        if (!interacted) {
+          interacted = true;
+          if (takeawayFlow) takeawayFlow.reveal();
+          if (global.CS4098.ui && global.CS4098.ui.flashOutcome) {
+            global.CS4098.ui.flashOutcome(outcomeSummary);
+          }
+        }
+      }
+      update();
+    }
+
+    // Replace the early update listeners with the interact-aware handlers
+    prevField.input.removeEventListener("input", update);
+    accField.input.removeEventListener("input", update);
+    prevField.input.addEventListener("input", onInteract);
+    accField.input.addEventListener("input", onInteract);
 
     update();
 
@@ -370,8 +440,11 @@
       reset: function () {
         prevField.input.value = "200";
         accField.input.value = "99";
+        interacted = false;
         takeaway.reset();
         if (further && further.tagName === "DETAILS") further.open = false;
+        if (orientGate) orientGate.lock();
+        if (takeawayFlow) takeawayFlow.reset();
         update();
       },
       destroy: function () {
@@ -405,6 +478,10 @@
     wrap.append(lab, input);
     return { wrap: wrap, input: input, val: val };
   }
+
+  // ---------------------------------------------------------------------------
+  // Register with the app shell (hash route #baserate)
+  // ---------------------------------------------------------------------------
 
   global.CS4098 = global.CS4098 || {};
   global.CS4098.modules = global.CS4098.modules || {};
