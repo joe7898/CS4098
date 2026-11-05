@@ -106,7 +106,7 @@
       '<p class="formula">P(C | +) = P(+ | C) P(C) / P(+)</p>' +
       "<p>The frequency tree computes that quantity by counting. This module sets the “clear negative” rate equal to the accuracy slider for a short story; real tests can differ on sensitivity vs specificity.</p>" +
       "<h3>Why the defaults are 99% and 1 in 200</h3>" +
-      "<p>99% matches Claire’s headline wording. 1 in 200 is an illustrative rare-condition setting (not a cited prevalence for a real illness) chosen so that, at high accuracy, false alarms can already outnumber true positives — the classic base-rate punchline in count form.</p>";
+      "<p>99% matches Claire’s headline wording. 1 in 200 is a rare-condition setting chosen so that, at high accuracy, false alarms can already outnumber true positives — the classic base-rate point in count form.</p>";
 
     // Longer chapter notes (More guidance, shown in full)
     const furtherGuided =
@@ -154,9 +154,9 @@
     const paramNote = el("p", { className: "param-note" });
     paramNote.innerHTML =
       "<strong>Why these controls.</strong> " +
-      "Defaults match the headline mood: <strong>99%</strong> accuracy and rarity <strong>1 in 200</strong> (illustrative, not a real disease rate). " +
-      "Use <em>both</em> sliders: make the condition rarer with accuracy still high, then also lower accuracy — the large percentage (PPV) should move in both cases. " +
-      "Counts follow Gigerenzer/Hoffrage-style natural frequencies out of 1,000.";
+      "Defaults match the headline: <strong>99%</strong> accuracy and rarity <strong>1 in 200</strong>. " +
+      "Use <em>both</em> sliders: make the condition rarer with accuracy still high, then also lower accuracy — the large percentage should move in both cases. " +
+      "Counts are out of 1,000 people (natural frequencies).";
 
     vizPane.append(paramNote, prevField.wrap, accField.wrap, readHint, tree, ppvHero, live);
 

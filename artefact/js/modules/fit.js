@@ -115,9 +115,9 @@
       '<p class="formula">MAE = (1/n) Σ |yᵢ − ŷ(xᵢ)|</p>' +
       "<p>As the solid curve is forced through every blue zigzag, MAE on blue falls (fit % rises) while MAE on red rises (fit % falls). The reds sit on the smooth trend between the blues — exactly where an overfit curve overshoots.</p>" +
       "<h3>Why this slider</h3>" +
-      "<p>Left = a simple pattern that still fits the new (red) points. Right = chase every past (blue) mark. The control exists to make the opposite swing visible in one gesture — not to tune a real grade model. Points and the 62 claim are a baseline example.</p>" +
-      "<h3>What this module is not</h3>" +
-      "<p>Not a neural-network playground. One control, two colours, and an opposite-swing readout are enough for the claim Isla meets.</p>";
+      "<p>Left = a simple pattern that still fits the new (red) points. Right = chase every past (blue) mark. The control is there so the opposite swing is visible in one gesture. Points and the 62 claim stand in for Isla’s story.</p>" +
+      "<h3>Keeping the page small</h3>" +
+      "<p>One control, two colours, and an opposite-swing readout are enough for the claim Isla meets.</p>";
 
     // Longer chapter notes (More guidance, shown in full)
     const furtherBodyGuided =
@@ -133,7 +133,7 @@
       "<span class=\"math\">Overfitting</span> is what happens when a model (or a curve) matches the training points very closely — including quirks and noise — and then performs worse on new points. " +
       "Domingos describes checking only the training examples as an “illusion of success”: the fit can look excellent while the real goal (doing well on new cases) has not been checked.</p>" +
       "<p>On the figure, overfitting looks like this: the solid line threads every blue zigzag, so past fit rises toward 100%, while the red points — which still follow the simpler dashed pattern — are left behind, so new fit falls. " +
-      "That opposite swing is not a bug in the demo; it is the definition made visible.</p>" +
+      "That opposite swing is the definition made visible.</p>" +
       "<h3>A simple measure of miss</h3>" +
       "<p>One standard way to summarise how far points sit from a curve is mean absolute error — the average vertical distance:</p>" +
       '<p class="formula">MAE = (1/n) Σ |yᵢ − ŷ(xᵢ)|</p>' +
@@ -143,9 +143,9 @@
       "<p>If the department only says the predictor was accurate on past results, it has answered a training-set question. " +
       "Whether 62 is trustworthy for the next assessment is a generalisation question. " +
       "Without evidence on new cases, the calibrated responses are to <strong>question</strong> the estimate and to <strong>reject</strong> the leap from past perfection to future certainty — not to treat the interface wording as sufficient proof.</p>" +
-      "<h3>What this page deliberately leaves out</h3>" +
-      "<p>A full course would introduce regularisation, cross-validation, and model complexity more formally. " +
-      "This page keeps one control and one picture so the point stays clear: " +
+      "<h3>Keeping the page small</h3>" +
+      "<p>A fuller course would cover regularisation, cross-validation, and model complexity. " +
+      "Here one control and one picture keep the point clear: " +
       "perfect on the data you fitted is not, by itself, a reason to trust a new prediction.</p>";
 
     // ----- Takeaway + trust / question / reject -----
@@ -300,8 +300,7 @@
     const paramNote = el("p", { className: "param-note" });
     paramNote.innerHTML =
       "<strong>Why this control.</strong> " +
-      "It mixes a simple pattern (left) with a curve that hits every past mark (right) so you can see Domingos’s “illusion of success”: past fit can rise while new fit falls. " +
-      "Illustrative points — not a real department model.";
+      "It mixes a simple pattern (left) with a curve that hits every past mark (right) so you can see Domingos’s “illusion of success”: past fit can rise while new fit falls.";
 
     control.append(ends, slider, prompt, live);
     vizPane.append(compare, canvas, legend, axis, meters, paramNote, control);

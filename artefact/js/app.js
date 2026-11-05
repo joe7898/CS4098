@@ -12,14 +12,15 @@
   // Constants and state
   // ---------------------------------------------------------------------------
 
-  // Remember layout choice across reloads (A = graph-first, B = more guidance)
+  // Remember layout choice for this browser tab only (A = graph-first default)
   const STORAGE_VARIANT = "cs4098-variant";
 
   const MODULE_ORDER = ["home", "fit", "baserate", "uncertainty"];
 
   const state = {
     route: "home",
-    variant: localStorage.getItem(STORAGE_VARIANT) === "b" ? "b" : "a",
+    // Graph-first is the preferred default; More guidance sticks only within this tab
+    variant: sessionStorage.getItem(STORAGE_VARIANT) === "b" ? "b" : "a",
     active: null, // { reset, destroy } from the mounted module, if any
   };
 
@@ -42,7 +43,13 @@
 
   function setVariant(v) {
     state.variant = v === "b" ? "b" : "a";
-    localStorage.setItem(STORAGE_VARIANT, state.variant);
+    sessionStorage.setItem(STORAGE_VARIANT, state.variant);
+    // Drop any old localStorage value left by earlier builds / audit trampoline
+    try {
+      localStorage.removeItem(STORAGE_VARIANT);
+    } catch (e) {
+      /* ignore */
+    }
 
     els.body.classList.toggle("variant-a", state.variant === "a");
     els.body.classList.toggle("variant-b", state.variant === "b");

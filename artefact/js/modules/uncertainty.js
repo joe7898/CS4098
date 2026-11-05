@@ -89,9 +89,9 @@
       "<p>Showing 82 with no range can create <span class=\"math\">overprecision</span> — more confidence in the digit than the data support. That is a calibration failure (overtrust in exactness), the habit Spiegelhalter-style communication warns against when a lone number looks exact.</p>" +
       '<p class="formula">reported value ± margin → interval [low, high]</p>' +
       "<h3>Why this control goes from ±0 to ±18</h3>" +
-      "<p>The slider does <em>not</em> claim a real confidence interval computed from Isla’s draft. It sets an <strong>illustrative</strong> half-width around 82 so you can see when uncertainty would matter. " +
-      "Isla’s cutoff is 75, so the low end crosses it once the half-width reaches <strong>8</strong> (82 − 8 = 74). The control continues to ±18 so you can feel “still OK” vs “decision flips” vs “clearly below.” " +
-      "82 and 75 are baseline-example numbers for that decision test, not published model outputs.</p>" +
+      "<p>The slider sets a half-width around 82 so you can see when uncertainty would matter for Isla’s cutoff. " +
+      "That cutoff is 75, so the low end crosses it once the half-width reaches <strong>8</strong> (82 − 8 = 74). The control continues to ±18 so you can feel “still OK” vs “decision flips” vs “clearly below.” " +
+      "82 and 75 are the numbers in Isla’s story for that decision test.</p>" +
       "<h3>Contractual trust</h3>" +
       "<p>Jacovi and colleagues treat trust in AI as contractual: you trust a specific claim (for example “82 is exact enough to accept the rewrite”), not “the system” in general. " +
       "A badge with no range can make that contract look stronger than the evidence.</p>";
@@ -104,8 +104,8 @@
       "<p>In classical statistics, a confidence interval is defined through a long-run coverage procedure. " +
       "In everyday reading — and in Spiegelhalter’s public communication of uncertainty — a displayed band is also a plain warning: " +
       "do not pretend the estimate is known more finely than this. This module uses that everyday reading on purpose.</p>" +
-      "<h3>What this page leaves out</h3>" +
-      "<p>It does not derive a formal 95% confidence interval from a sample. Ask for the range before you trust the point — especially when a decision threshold is in play.</p>";
+      "<h3>Keeping the page small</h3>" +
+      "<p>Ask for the range before you trust the point — especially when a decision threshold is in play.</p>";
 
     // ----- Interactive stage: badge first, then band + decision flip -----
     const vizPane = el("div", {
@@ -122,7 +122,7 @@
       '<span class="confidence-badge-label">Confidence</span>' +
       '<span class="confidence-badge-num">82</span>' +
       "</div>" +
-      '<p class="badge-note" id="badge-note">No range shown — this is the misleading interface.</p>';
+      '<p class="badge-note" id="badge-note">No range shown — only the single score.</p>';
 
     const compare = el("div", { className: "compare-strip", id: "band-compare" });
     compare.innerHTML =
@@ -163,7 +163,7 @@
     const paramNote = el("p", { className: "param-note" });
     paramNote.innerHTML =
       "<strong>Why this range control.</strong> " +
-      "It widens an <em>illustrative</em> band around the fixed badge <strong>82</strong> — not a real CI from data. " +
+      "It widens a band around the fixed badge <strong>82</strong>. " +
       "Isla accepts only if score ≥ <strong>75</strong>, so the decision flips once half-width reaches <strong>±8</strong> (low end 74). " +
       "The slider goes to ±18 so you can compare “still clears 75,” “just flipped,” and “clearly below.”";
 
@@ -178,13 +178,13 @@
       step: "1",
       attrs: {
         "aria-label":
-          "Illustrative half-width of uncertainty around confidence 82; decision flips near plus or minus 8",
+          "Half-width of uncertainty around confidence 82; decision flips near plus or minus 8",
       },
     });
     const prompt = el("p", {
       className: "drag-prompt",
       text:
-        "Start on the left (badge only). Drag right to widen the illustrative band — watch for the flip near ±8 when the low end crosses 75.",
+        "Start on the left (badge only). Drag right to widen the band — watch for the flip near ±8 when the low end crosses 75.",
     });
     const live = el("p", { className: "live", attrs: { "aria-live": "polite" } });
     control.append(ends, slider, prompt, live);
@@ -223,7 +223,7 @@
         band.style.display = "none";
         badgeChrome.classList.remove("is-honest");
         document.getElementById("badge-note").textContent =
-          "No range shown — this is the misleading interface.";
+          "No range shown — only the single score.";
         document.getElementById("band-readout").textContent = "hidden";
         compare.classList.remove("warn");
         document.getElementById("decision-verdict").textContent =
@@ -237,7 +237,7 @@
           outcomeP.innerHTML =
             "Right now you see what Isla sees: a polished <strong>confidence 82</strong> with no band. " +
             "Her rule (<strong>accept if ≥ 75</strong>) looks fine. " +
-            "Drag right to widen an <em>illustrative</em> band (not a computed CI). The decision flips once half-width reaches <strong>±8</strong>.";
+            "Drag right to widen the band. The decision flips once half-width reaches <strong>±8</strong>.";
         }
         return;
       }
@@ -293,8 +293,7 @@
             "–" +
             hi +
             "</strong>. The badge still shows <strong>82</strong>, but the low end is <strong>below 75</strong>, so Isla’s rule flips. " +
-            "That is the overprecision lesson: a lone score can look decision-ready while a range would change the act. " +
-            "(Illustrative band — not a formal CI.)";
+            "That is the overprecision lesson: a lone score can look decision-ready while a range would change the act.";
         } else {
           outcomeP.innerHTML =
             "Half-width <strong>±" +
@@ -347,7 +346,7 @@
         "<h2>Badge, band, and the 75 cutoff</h2>" +
         "<ol>" +
         "<li><strong>Badge only (±0)</strong> — what Isla sees: confidence 82, no range.</li>" +
-        "<li><strong>Half-width (drag right)</strong> — an illustrative ±margin around 82, up to ±18; not a computed confidence interval.</li>" +
+        "<li><strong>Half-width (drag right)</strong> — a ±margin around 82, up to ±18.</li>" +
         "<li><strong>75 cutoff</strong> — Isla’s rule for accepting the rewrite; marked on the scale.</li>" +
         "<li><strong>Decision flip at ±8</strong> — low end becomes 74; accept becomes unsafe even though the badge still says 82.</li>" +
         "</ol>" +
@@ -383,7 +382,7 @@
       const orient = el("p", {
         className: "lede",
         text:
-          "Read the claim first. Then try the chart: start with the badge alone, widen the illustrative band, and watch Isla’s “accept if ≥ 75” rule — it flips near ±8.",
+          "Read the claim first. Then try the chart: start with the badge alone, widen the band, and watch Isla’s “accept if ≥ 75” rule — it flips near ±8.",
       });
 
       const proseAbove = el("div", { className: "prose" });
@@ -391,7 +390,7 @@
         el("p", {
           text:
             "A lone confidence badge can create overprecision — unwarranted trust in exactness. " +
-            "The band is illustrative (Spiegelhalter-style “don’t pretend exactness”), chosen so the low end can cross 75; 82 and 75 are baseline-example numbers for that decision test.",
+            "Widen the band and check whether the low end still clears Isla’s 75 cutoff.",
         })
       );
 

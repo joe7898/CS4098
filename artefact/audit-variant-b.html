@@ -12,10 +12,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Audit trampoline — More guidance</title>
   <script>
-    // Set Variant B before the shell reads localStorage, then enter index.html
-    localStorage.setItem("cs4098-variant", "b");
+    // Set Variant B for this tab only, then enter index.html
+    sessionStorage.setItem("cs4098-variant", "b");
+    try {
+      localStorage.removeItem("cs4098-variant");
+    } catch (e) {}
     var target = new URLSearchParams(location.search).get("to") || "#fit";
-    location.replace("index.html?v=flow15" + target);
+    location.replace("index.html?v=flow17" + target);
   </script>
 </head>
 <body>
