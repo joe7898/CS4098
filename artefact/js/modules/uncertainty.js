@@ -51,7 +51,7 @@
     // ----- Takeaway + trust / question / reject -----
     const takeaway = buildTakeaway({
       verdictHtml:
-        "<strong>Question a lone score that hides uncertainty — especially when a decision threshold is in play.</strong> " +
+        "<strong>Question a lone score that hides a range — especially when a decision threshold is in play.</strong> " +
         "A point estimate without a range can invite more confidence than the evidence supports. " +
         "If a plausible low end would fall below Isla’s 75 cutoff, <strong>question</strong> the lone badge " +
         "and <strong>reject</strong> the reading that “we know exactly where we stand.”",
@@ -127,7 +127,7 @@
     const compare = el("div", { className: "compare-strip", id: "band-compare" });
     compare.innerHTML =
       '<div class="compare-card past"><div class="compare-label">What the badge claims</div><div class="compare-num">exact 82</div></div>' +
-      '<div class="compare-card next"><div class="compare-label">Honest range</div><div class="compare-num" id="band-readout">hidden</div></div>';
+      '<div class="compare-card next"><div class="compare-label">With a range</div><div class="compare-num" id="band-readout">hidden</div></div>';
 
     const decision = el("div", {
       className: "decision-hero",
@@ -333,8 +333,8 @@
       step1.append(
         el("p", {
           text:
-            "This page starts on that misleading badge on purpose: 82, no range. " +
-            "You then reveal a plausible band and check whether the low end still clears 75. " +
+            "This page starts with the badge Isla sees: 82, no range. " +
+            "You then reveal a band and check whether the low end still clears 75. " +
             "When it falls below the cutoff, the accept/reject decision flips even though the badge still says 82.",
         })
       );
@@ -356,7 +356,7 @@
       const step3 = el("section", { className: "guided-step" });
       step3.innerHTML =
         '<p class="step-label">Step 3 — Try the control</p>' +
-        "<h2>Reveal uncertainty and watch the decision</h2>";
+        "<h2>Reveal the range and watch the decision</h2>";
       step3.append(vizPane, outcomeSummary);
       flow.append(step3);
 
@@ -382,7 +382,7 @@
       const orient = el("p", {
         className: "lede",
         text:
-          "Read the claim first. Then try the chart: start with the badge alone, widen the band, and watch Isla’s “accept if ≥ 75” rule — it flips near ±8.",
+          "Read the claim first. Then try the control: start with the badge alone, widen the band, and watch Isla’s “accept if ≥ 75” rule — it flips near ±8.",
       });
 
       const proseAbove = el("div", { className: "prose" });
@@ -424,7 +424,7 @@
       takeaway.el._flowAlsoHide = [further, nextEl, outcomeSummary];
     }
 
-    // Graph-first only: control inactive until Try the chart (Design orient gate)
+    // Graph-first only: control inactive until Try the control (Design orient gate)
     let orientGate = null;
     let takeawayFlow = null;
     let interacted = false;
@@ -433,12 +433,12 @@
         controls: [slider],
         mountNear: control,
         stage: vizPane,
-        buttonLabel: "Try the chart",
-        hint: "Read the claim on the left first. The badge is a preview until you press Try the chart.",
+        buttonLabel: "Try the control",
+        hint: "Read the claim on the left first. The badge is a preview until you press Try the control.",
       });
       if (global.CS4098.ui.deferTakeawayUntilInteract) {
         takeawayFlow = global.CS4098.ui.deferTakeawayUntilInteract(takeaway.el, {
-          hint: "After you try the chart, you’ll decide trust, question, or reject here.",
+          hint: "After you try the control, you’ll decide trust, question, or reject here.",
           alsoHide: takeaway.el._flowAlsoHide || [],
         });
       }

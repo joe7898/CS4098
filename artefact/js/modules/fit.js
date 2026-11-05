@@ -366,9 +366,9 @@
 
       const stepTry = el("section", { className: "guided-step" });
       stepTry.innerHTML =
-        '<p class="step-label">Step 3 — Try the control</p>' +
+        '<p class="step-label">Step 3 — Try the chart</p>' +
         "<h2>Change the fit and watch both colours</h2>" +
-        "<p>Use the slider below. Change one setting, then read the short summary under the figure before you move on.</p>";
+        "<p>Use the slider below. Change one setting, then read the short summary under the chart before you move on.</p>";
       stepTry.append(vizPane, outcomeSummary);
       flow.append(stepTry);
 
@@ -467,7 +467,7 @@
         mountNear: control,
         stage: vizPane,
         buttonLabel: "Try the chart",
-        hint: "Read the claim on the left first. The figure is a preview until you press Try the chart.",
+        hint: "Read the claim on the left first. The chart is a preview until you press Try the chart.",
       });
       if (global.CS4098.ui.deferTakeawayUntilInteract) {
         takeawayFlow = global.CS4098.ui.deferTakeawayUntilInteract(take, {
@@ -591,7 +591,7 @@
           cNew +
           "% fit) even though it misses some past bumps (" +
           cOld +
-          "%). This is closer to something you might trust for the next mark.";
+          "%). This pattern still tracks the new assessments.";
         prompt.textContent = "Now drag all the way to the right.";
         if (outcomeP) {
           outcomeP.innerHTML =

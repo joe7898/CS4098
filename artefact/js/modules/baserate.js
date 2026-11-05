@@ -350,7 +350,7 @@
       const orient = el("p", {
         className: "lede",
         text:
-          "Read Claire’s claim first. Then try the chart: use both sliders. Make the condition rarer with accuracy still high, then also change accuracy — watch the large percentage (chance a positive is true), not the headline.",
+          "Read Claire’s claim first. Then try the tree: use both sliders. Make the condition rarer with accuracy still high, then also change accuracy — watch the large percentage (chance a positive is true), not the headline.",
       });
 
       const proseAbove = el("div", { className: "prose" });
@@ -394,7 +394,7 @@
       takeaway.el._flowAlsoHide = [further, nextEl, outcomeSummary];
     }
 
-    // Graph-first only: controls inactive until Try the chart (Design orient gate)
+    // Graph-first only: controls inactive until Try the tree (Design orient gate)
     let orientGate = null;
     let takeawayFlow = null;
     let interacted = false;
@@ -403,12 +403,12 @@
         controls: [prevField.input, accField.input],
         mountNear: prevField.wrap,
         stage: vizPane,
-        buttonLabel: "Try the chart",
-        hint: "Read the claim on the left first. The tree is a preview until you press Try the chart.",
+        buttonLabel: "Try the tree",
+        hint: "Read the claim on the left first. The tree is a preview until you press Try the tree.",
       });
       if (global.CS4098.ui.deferTakeawayUntilInteract) {
         takeawayFlow = global.CS4098.ui.deferTakeawayUntilInteract(takeaway.el, {
-          hint: "After you try the chart, you’ll decide trust, question, or reject here.",
+          hint: "After you try the tree, you’ll decide trust, question, or reject here.",
           alsoHide: takeaway.el._flowAlsoHide || [],
         });
       }

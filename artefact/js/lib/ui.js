@@ -319,7 +319,7 @@
   // ---------------------------------------------------------------------------
 
   /**
-   * Adds Expand chart / Close chart on a viz pane. Uses a fixed overlay +
+   * Adds Expand figure / Close figure on a viz pane. Uses a fixed overlay +
    * placeholder so the page does not jump; Escape closes. Desktop hides the
    * control via CSS — dual-column scroll handles large screens instead.
    */
@@ -331,7 +331,7 @@
     const btn = el("button", {
       type: "button",
       className: "stage-expand-btn",
-      text: "Expand chart",
+      text: "Expand figure",
       attrs: {
         "aria-expanded": "false",
         "aria-controls": stage.id || undefined,
@@ -350,7 +350,7 @@
       if (!expanded()) return;
       stage.classList.remove("viz-pane--expanded");
       document.body.classList.remove("stage-expanded");
-      btn.textContent = "Expand chart";
+      btn.textContent = "Expand figure";
       btn.setAttribute("aria-expanded", "false");
       if (placeholder && placeholder.parentNode) {
         placeholder.parentNode.removeChild(placeholder);
@@ -369,7 +369,7 @@
       }
       stage.classList.add("viz-pane--expanded");
       document.body.classList.add("stage-expanded");
-      btn.textContent = "Close chart";
+      btn.textContent = "Close figure";
       btn.setAttribute("aria-expanded", "true");
       try {
         btn.focus();
