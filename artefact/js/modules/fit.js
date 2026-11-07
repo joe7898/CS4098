@@ -1,10 +1,10 @@
 /**
  * Author: Omar Raza
  * Student ID: 230013491
- * Description: Module 1 — overfitting / generalisation (Isla grade-predictor
- * example). Slider mixes a simple trend with a zigzag through past points;
- * fit % on past vs new swings in opposite directions. Supports Graph-first
- * (Variant A) and More guidance (Variant B) layouts from the report.
+ * Description: Module 1 — Looking perfect on old data (Isla / grade predictor).
+ * Slider mixes a simple trend with a zigzag through past marks; match % on
+ * past (blue) vs new (red) can swing opposite ways. Graph-first and More
+ * guidance layouts.
  */
 
 (function (global) {
@@ -97,136 +97,108 @@
     const kicker = el("p", { className: "chapter-kicker", text: "Module 1 of 3" });
     const title = el("h1", { text: "Looking perfect on old data" });
 
-    // Claim text shared by both layouts (Isla / grade predictor)
+    // Claim card shared by both layouts (Isla / grade predictor)
     const claimHtml =
-      '<span class="label">Example — Isla</span>' +
-      "<p>A department grade predictor was fitted to last year’s coursework marks. " +
-      "On <strong>those past students</strong> it looked perfect. It now shows Isla a predicted mark of 62 for her <strong>next</strong> assessment and calls the estimate “accurate on past results.”</p>";
+      '<span class="label">The claim</span>' +
+      '<span class="claim-who">Isla · department grade predictor</span>' +
+      "<p>A department tool was built from last year’s coursework marks. " +
+      "On <strong>those past students</strong> it looked perfect. It now shows Isla a predicted mark of <strong>62</strong> for her <strong>next</strong> assessment and calls the estimate “accurate on past results.”</p>";
 
     // Short “Going further” (Graph-first, collapsed by default)
     const furtherBodyShort =
-      "<h3>Training set and test set</h3>" +
-      "<p>The blue points stand in for a <span class=\"math\">training set</span> (past students used to fit the tool). The red points stand in for a <span class=\"math\">test set</span> (new assessments). Good performance on training alone does not establish generalisation.</p>" +
-      "<h3>Generalisation and overfitting</h3>" +
-      "<p><span class=\"math\">Generalisation</span> means useful predictions on unseen cases. <span class=\"math\">Overfitting</span> means matching training points — including their quirks — so closely that new points are missed. " +
-      "Domingos calls checking only the training examples an “illusion of success”: the fit can look excellent while new-case performance was never checked.</p>" +
-      "<h3>Why the meters swing opposite ways</h3>" +
-      "<p>Each meter is a rescaled mean absolute error (average vertical miss):</p>" +
-      '<p class="formula">MAE = (1/n) Σ |yᵢ − ŷ(xᵢ)|</p>' +
-      "<p>As the solid curve is forced through every blue zigzag, MAE on blue falls (fit % rises) while MAE on red rises (fit % falls). The reds sit on the smooth trend between the blues — exactly where an overfit curve overshoots.</p>" +
+      "<h3>Past data and new data</h3>" +
+      "<p>The blue points stand in for a <span class=\"math\">training set</span> — the past students used to build the tool. " +
+      "The red points stand in for a <span class=\"math\">test set</span> — new assessments the tool did not practise on. " +
+      "Looking good on past data alone does not mean it will work on new cases.</p>" +
+      "<h3>Doing well next time vs chasing every old mark</h3>" +
+      "<p><span class=\"math\">Generalisation</span> means useful predictions on cases you have not seen yet. " +
+      "<span class=\"math\">Overfitting</span> means matching the old points — including their quirks — so closely that new points are missed. " +
+      "Domingos calls checking only the old examples an “illusion of success”: the fit can look excellent while nobody checked what happens next.</p>" +
+      "<h3>Why the two % swing opposite ways</h3>" +
+      "<p>Each match % is based on average vertical miss (how far points sit from the line):</p>" +
+      '<p class="formula" data-tex="\\mathrm{MAE}=\\dfrac{1}{n}\\sum_{i}\\lvert y_i-\\hat{y}(x_i)\\rvert">MAE = (1/n) Σ |yᵢ − ŷ(xᵢ)|</p>' +
+      "<p>As the solid curve is forced through every blue zigzag, miss on blue falls (past % rises) while miss on red rises (new % falls). " +
+      "The reds sit on the smooth trend between the blues — exactly where a line that chased every old bump overshoots.</p>" +
       "<h3>Why this slider</h3>" +
-      "<p>Left = a simple pattern that still fits the new (red) points. Right = chase every past (blue) mark. The control is there so the opposite swing is visible in one gesture. Points and the 62 claim stand in for Isla’s story.</p>" +
-      "<h3>Keeping the page small</h3>" +
-      "<p>One control, two colours, and an opposite-swing readout are enough for the claim Isla meets.</p>";
+      "<p>Left = a simple pattern that still fits the new (red) points. Right = chase every past (blue) mark. " +
+      "Dragging right makes the trade-off visible in one move.</p>" +
+      "<h3>Sources</h3>" +
+      "<p>Looking perfect only on past data as an “illusion of success”: Domingos (2012), <em>A Few Useful Things to Know about Machine Learning</em>. " +
+      "More on the home page under <a href=\"#sources\">Sources</a>.</p>";
 
     // Longer chapter notes (More guidance, shown in full)
     const furtherBodyGuided =
-      "<h3>Training set and test set</h3>" +
-      "<p>In machine learning and predictive modelling, the examples used to build a model are often called the <span class=\"math\">training set</span>. " +
-      "A separate collection held back to check performance is a <span class=\"math\">test set</span> (sometimes people also use a validation set while tuning). " +
-      "In Isla’s story, last year’s coursework marks play the role of training data: they are what the department tool was fitted to. " +
-      "Her next assessment is like a test case — something the fitting procedure has not been allowed to “see” and chase.</p>" +
-      "<p>A common mistake — and the one this page is built around — is to report accuracy only on the training set and then talk as if that number applied automatically to new cases. " +
+      "<h3>Past data and new data</h3>" +
+      "<p>People who build prediction tools often call the examples used to build the tool a <span class=\"math\">training set</span>. " +
+      "A separate collection held back to check how well it works is a <span class=\"math\">test set</span>. " +
+      "In Isla’s story, last year’s coursework marks are the past data the department tool was built from. " +
+      "Her next assessment is like a new case — something that building process has not been allowed to “see” and chase.</p>" +
+      "<p>A common mistake — and the one Isla’s department wording invites — is to report how well the tool did on the old data and then talk as if that applied automatically to new cases. " +
       "The split exists so that “how well did we do on the data we used?” is not confused with “how well will we do next?”</p>" +
-      "<h3>Generalisation and overfitting</h3>" +
-      "<p>The usual aim of fitting is <span class=\"math\">generalisation</span>: useful predictions on data the model has not seen. " +
-      "<span class=\"math\">Overfitting</span> is what happens when a model (or a curve) matches the training points very closely — including quirks and noise — and then performs worse on new points. " +
-      "Domingos describes checking only the training examples as an “illusion of success”: the fit can look excellent while the real goal (doing well on new cases) has not been checked.</p>" +
-      "<p>On the figure, overfitting looks like this: the solid line threads every blue zigzag, so past fit rises toward 100%, while the red points — which still follow the simpler dashed pattern — are left behind, so new fit falls. " +
-      "That opposite swing is the definition made visible.</p>" +
+      "<h3>Doing well next time vs chasing every old mark</h3>" +
+      "<p>The usual aim is <span class=\"math\">generalisation</span>: useful predictions on data the tool has not seen. " +
+      "<span class=\"math\">Overfitting</span> is what happens when a line matches the old points very closely — including quirks and noise — and then does worse on new points. " +
+      "Domingos describes checking only the old examples as an “illusion of success”: the fit can look excellent while the real goal (doing well on new cases) has not been checked.</p>" +
+      "<p>On the chart, that looks like this: the solid line threads every blue zigzag, so past match rises toward 100%, while the red points — which still follow the simpler dashed pattern — are left behind, so new match falls. " +
+      "That opposite swing is the whole point of the picture.</p>" +
       "<h3>A simple measure of miss</h3>" +
       "<p>One standard way to summarise how far points sit from a curve is mean absolute error — the average vertical distance:</p>" +
-      '<p class="formula">MAE = (1/n) Σ |yᵢ − ŷ(xᵢ)|</p>' +
-      "<p>The fit percentages on this page are a rescaled version of that idea (higher % means smaller average miss). " +
-      "You do not need to compute MAE by hand; the point is that “looking perfect on blue” and “staying near red” are two different scores, and a past-only claim only reports the first.</p>" +
+      '<p class="formula" data-tex="\\mathrm{MAE}=\\dfrac{1}{n}\\sum_{i}\\lvert y_i-\\hat{y}(x_i)\\rvert">MAE = (1/n) Σ |yᵢ − ŷ(xᵢ)|</p>' +
+      "<p>The match percentages here turn that idea into “higher % = smaller average miss.” " +
+      "“Looking perfect on blue” and “staying near red” are two different scores, and a past-only claim only reports the first.</p>" +
       "<h3>Back to Isla’s 62</h3>" +
-      "<p>If the department only says the predictor was accurate on past results, it has answered a training-set question. " +
-      "Whether 62 is trustworthy for the next assessment is a generalisation question. " +
-      "Without evidence on new cases, the calibrated responses are to <strong>question</strong> the estimate and to <strong>reject</strong> the leap from past perfection to future certainty — not to treat the interface wording as sufficient proof.</p>" +
-      "<h3>Keeping the page small</h3>" +
-      "<p>A fuller course would cover regularisation, cross-validation, and model complexity. " +
-      "Here one control and one picture keep the point clear: " +
-      "perfect on the data you fitted is not, by itself, a reason to trust a new prediction.</p>";
+      "<p>If the department only says the predictor was accurate on past results, it has answered an old-data question. " +
+      "Whether 62 is trustworthy for the next assessment is a new-data question. " +
+      "Without evidence on new cases, the better moves are to <strong>question</strong> the estimate and to <strong>reject</strong> the leap from past perfection to future certainty — not to treat the department’s wording as enough proof.</p>" +
+      "<h3>Sources</h3>" +
+      "<p>Looking perfect only on past data as an “illusion of success”: Domingos (2012), <em>A Few Useful Things to Know about Machine Learning</em>. " +
+      "More on the home page under <a href=\"#sources\">Sources</a>.</p>";
 
-    // ----- Takeaway + trust / question / reject -----
-    const take = el("div", { className: "takeaway" });
-    take.innerHTML =
-      "<h2>Takeaway</h2>" +
-      '<p class="verdict"><strong>A strong score on past students is not enough reason to trust the same prediction for new cases.</strong> ' +
-      "When the fit looks perfect on past marks (blue) it can still miss new assessments (red). " +
-      "So the department’s “accurate on past results” wording should be <strong>questioned</strong> rather than trusted on its own — " +
-      "and the leap from past perfection to certainty about Isla’s 62 should be <strong>rejected</strong>.</p>" +
-      "<p class=\"note\">Would you trust, question, or reject the department’s claim? Each choice gets a short response.</p>";
-    const choices = el("div", {
-      className: "choices",
-      attrs: { role: "group", "aria-label": "Your judgement" },
-    });
-    const feedback = el("div", {
-      className: "choice-feedback",
-      attrs: { "aria-live": "polite", hidden: "true" },
-    });
-    const judgement = {
-      trust: {
-        tone: "miscalibrated",
-        title: "Trust — usually too strong here",
-        body:
-          "If Isla trusts 62 because the tool looked perfect on last year’s students, she is relying on the wrong evidence. " +
-          "On the figure, fit on past (blue) can look excellent while fit on new (red) collapses. " +
-          "Trust would be more warranted only if the department also showed good performance on new assessments. " +
-          "Until that check exists, the better move is to question the 62.",
+    // ----- Your call first; Takeaway after a choice -----
+    let takeawayFlow = null;
+    const takeaway = global.CS4098.ui.buildTakeaway({
+      restateHtml:
+        "The tool looked perfect on last year’s students, so Isla can treat <strong>62</strong> as accurate for her next assessment.",
+      prompt: "Would you trust, question, or reject that claim?",
+      verdictHtml:
+        "<strong>Looking perfect on past students is not enough reason to trust the same prediction for new cases.</strong> " +
+        "When the line looks perfect on past marks (blue) it can still miss new assessments (red). " +
+        "So the department’s “accurate on past results” wording should be <strong>questioned</strong> rather than trusted on its own — " +
+        "and the leap from past perfection to certainty about Isla’s 62 should be <strong>rejected</strong>.",
+      judgement: {
+        trust: {
+          tone: "miscalibrated",
+          title: "Trust — usually too strong here",
+          body:
+            "If Isla trusts 62 because the tool looked perfect on last year’s students, she is using the wrong check. " +
+            "On the chart, match on past (blue) can look excellent while match on new (red) collapses. " +
+            "Trust would make more sense only if the department also showed good results on new assessments. " +
+            "Until that check exists, the better move is to question the 62.",
+        },
+        question: {
+          tone: "calibrated",
+          title: "Question — the right call here",
+          body:
+            "That matches what the chart shows. “Accurate on past results” answers a different question from “will this work for Isla’s next assessment?” " +
+            "Ask whether anyone checked new cases, and how far off the line was there. " +
+            "Until those answers arrive, treat 62 as a number from last year’s marks — not a settled forecast.",
+        },
+        reject: {
+          tone: "calibrated",
+          title: "Reject — right for what the wording overpromises",
+          body:
+            "Reject the leap from “perfect on past students” to “trust 62 for the next assessment.” " +
+            "That does not mean rejecting every use of the tool; it means rejecting that wording as enough proof. " +
+            "A line can hit every blue point and still miss the reds.",
+        },
       },
-      question: {
-        tone: "calibrated",
-        title: "Question — the calibrated response",
-        body:
-          "This matches what the figure shows. “Accurate on past results” answers a different question from “will this work for Isla’s next assessment?” " +
-          "Ask whether performance was checked on new cases, and how large the miss was there. " +
-          "Until those answers arrive, treat 62 as a past-fitted number, not a settled forecast.",
+      onJudged: function () {
+        if (takeawayFlow && takeawayFlow.revealAfterJudgement) {
+          takeawayFlow.revealAfterJudgement();
+        }
       },
-      reject: {
-        tone: "calibrated",
-        title: "Reject — right for the overclaim",
-        body:
-          "Reject the leap from “perfect on past students” to “trust 62 for the next assessment.” " +
-          "That does not mean rejecting every use of the tool; it means rejecting that wording as enough proof. " +
-          "The graph makes the failure mode visible: a line can hit every blue point and still miss the reds.",
-      },
-    };
-    [
-      ["trust", "I would trust it"],
-      ["question", "I would question it"],
-      ["reject", "I would reject it"],
-    ].forEach(function (pair) {
-      const k = pair[0];
-      const label = pair[1];
-      const b = el("button", {
-        className: "choice",
-        type: "button",
-        text: label,
-        attrs: { "data-kind": k, "aria-pressed": "false" },
-      });
-      b.addEventListener("click", function () {
-        choices.querySelectorAll(".choice").forEach(function (c) {
-          c.setAttribute("aria-pressed", "false");
-        });
-        b.setAttribute("aria-pressed", "true");
-        const j = judgement[k];
-        feedback.hidden = false;
-        feedback.dataset.tone = j.tone;
-        feedback.innerHTML =
-          '<p class="feedback-kicker">' +
-          (j.tone === "calibrated" ? "Calibrated judgement" : "Miscalibrated for this claim") +
-          "</p>" +
-          "<h3>" +
-          j.title +
-          "</h3>" +
-          "<p>" +
-          j.body +
-          "</p>";
-      });
-      choices.append(b);
     });
-    take.append(choices, feedback);
+    const take = takeaway.el;
 
     // ----- Interactive stage (canvas, meters, slider) -----
     const vizPane = el("div", {
@@ -237,22 +209,22 @@
     }
     const canvas = el("canvas");
     canvas.width = 680;
-    canvas.height = guided ? 360 : 400;
+    canvas.height = guided ? 280 : 300;
     canvas.setAttribute(
       "aria-label",
-      "Past marks versus new assessments with a fitted curve"
+      "Past marks versus new assessments with a curve through the past points"
     );
 
-    // Match bitmap size to the stage width so More guidance can use the full
-    // main column (not a fixed 680×300 postcard).
+    // Match bitmap size to the stage width; keep height modest so compare % +
+    // chart + meters + slider stay in view together (esp. on mobile).
     function sizeCanvas() {
       const avail = Math.max(
         320,
         Math.floor((vizPane.clientWidth || canvas.clientWidth || 680) - 4)
       );
       const h = guided
-        ? Math.max(320, Math.min(Math.round(avail * 0.5), Math.round(window.innerHeight * 0.48)))
-        : Math.max(360, Math.round(avail * 0.52));
+        ? Math.max(240, Math.min(Math.round(avail * 0.38), Math.round(window.innerHeight * 0.34)))
+        : Math.max(260, Math.round(avail * 0.38));
       if (canvas.width !== avail || canvas.height !== h) {
         canvas.width = avail;
         canvas.height = h;
@@ -261,17 +233,14 @@
 
     const compare = el("div", { className: "compare-strip" });
     compare.innerHTML =
-      '<div class="compare-card past"><div class="compare-label">Fit on past (blue)</div><div class="compare-num" id="fit-past">—</div></div>' +
-      '<div class="compare-card next"><div class="compare-label">Fit on new (red)</div><div class="compare-num" id="fit-new">—</div></div>';
+      '<div class="compare-card past"><div class="compare-label">Match on past (blue)</div><div class="compare-num" id="fit-past">—</div></div>' +
+      '<div class="compare-card next"><div class="compare-label">Match on new (red)</div><div class="compare-num" id="fit-new">—</div></div>';
 
     const legend = el("p", { className: "legend" });
     legend.innerHTML =
-      '<span><i class="swatch" style="background:#4da3ff"></i>Past (fitted)</span>' +
-      '<span><i class="swatch square" style="background:#ff6b5a"></i>New</span>' +
-      "<span>Dashed = simple · Solid = current</span>";
-    const axis = el("div", { className: "axis-caption" });
-    axis.innerHTML =
-      "<span>Past coursework →</span><span>→ Next assessment</span>";
+      '<span><i class="swatch" style="background:#4da3ff"></i>Past students</span>' +
+      '<span><i class="swatch square" style="background:#ff6b5a"></i>New assessments</span>' +
+      "<span>Dashed = simple pattern · Solid = what you set</span>";
 
     const meters = el("div", { className: "meters" });
     const mOld = meter("How well it matches past marks", false);
@@ -294,16 +263,33 @@
     });
     const prompt = el("p", {
       className: "drag-prompt",
-      text: "Try dragging all the way to the right.",
+      text: "Drag all the way to the right.",
     });
     const live = el("p", { className: "live", attrs: { "aria-live": "polite" } });
-    const paramNote = el("p", { className: "param-note" });
-    paramNote.innerHTML =
-      "<strong>Why this control.</strong> " +
-      "It mixes a simple pattern (left) with a curve that hits every past mark (right) so you can see Domingos’s “illusion of success”: past fit can rise while new fit falls.";
+
+    // How-to-read on the stage; compact + collapsible on narrow viewports
+    const stageKey = el("details", { className: "stage-key" });
+    stageKey.innerHTML =
+      "<summary>On this chart <span class=\"stage-key-more\">· more detail</span></summary>" +
+      "<ul>" +
+      "<li><strong>Blue</strong> = past students · <strong>Red</strong> = new assessments</li>" +
+      "<li><strong>Left</strong> = simple pattern · <strong>Right</strong> = hit every past mark</li>" +
+      "<li>The two % often move opposite ways</li>" +
+      "</ul>";
+    if (typeof matchMedia === "function") {
+      const wide = matchMedia("(min-width: 900px)");
+      const syncKey = () => {
+        stageKey.open = wide.matches;
+      };
+      syncKey();
+      if (wide.addEventListener) wide.addEventListener("change", syncKey);
+    }
 
     control.append(ends, slider, prompt, live);
-    vizPane.append(compare, canvas, legend, axis, meters, paramNote, control);
+    // Numbers + chart first on mobile fold; key sits with the figure (opens by default on desktop)
+    // No x-axis “past → next” caption: colour (blue/red) carries that; the slider ends
+    // are a different dimension (simple pattern ↔ hit every past mark).
+    vizPane.append(compare, canvas, legend, stageKey, meters, control);
 
     const outcomeSummary = el("div", {
       className: "outcome-summary",
@@ -318,24 +304,24 @@
     let further = null;
 
     if (guided) {
-      // Variant B: vertical workbook — instruct → try → notice → conclude
+      // More guidance: vertical workbook — claim → try → notice → decide
       root.append(kicker, title);
       const flow = el("div", { className: "guided-flow" });
 
       const step1 = el("section", { className: "guided-step" });
       step1.innerHTML =
-        '<p class="step-label">Step 1 — Read the claim</p>' +
-        "<h2>What the department’s wording claims</h2>";
+        '<p class="step-label">Step 1 — The claim</p>' +
+        "<h2>What Isla is being shown</h2>";
       const claim = el("div", { className: "claim" });
       claim.innerHTML = claimHtml;
       step1.append(claim);
       step1.append(
         el("p", {
+          className: "after-claim",
           text:
-            "Two questions get glued together in everyday wording. " +
-            "How well did the predictor match the past students it was fitted to? " +
+            "Two questions sit under one claim. How well did the tool match the past students it was built from? " +
             "And how much should Isla trust 62 for an assessment that has not happened yet? " +
-            "“Accurate on past results” answers the first. The interface invites her to treat it as an answer to the second.",
+            "“Accurate on past results” answers the first. The wording invites her to treat it as the second.",
         })
       );
       step1.append(
@@ -343,49 +329,46 @@
           text:
             "Prediction tools are usually built from examples someone already has. That is normal. " +
             "The difficulty is what happens next: new cases can follow the same broad pattern and still miss every bump in the old data. " +
-            "If you only inspect the old examples, a flexible fit can look flawless while missing the next ones — Domingos’s “illusion of success.”",
+            "If you only check the old examples, a flexible line can look flawless while missing the next ones.",
         })
       );
       flow.append(step1);
 
       const step2 = el("section", { className: "guided-step" });
       step2.innerHTML =
-        '<p class="step-label">Step 2 — How to use the display</p>' +
+        '<p class="step-label">Step 2 — The chart</p>' +
         "<h2>What each part means</h2>" +
-        "<p>The figure stands in for the grade tool. It is simpler than a real predictor so the idea stays visible.</p>" +
+        "<p>One picture for Isla’s grade tool — past students and new assessments side by side.</p>" +
         "<ol>" +
-        "<li><strong>Blue points — past students.</strong> Marks the tool was fitted to (like a training set).</li>" +
-        "<li><strong>Red points — new assessments.</strong> Cases the fit has not been tuned to, including something like Isla’s next mark (like a test set).</li>" +
+        "<li><strong>Blue points — past students.</strong> Marks the tool was built from.</li>" +
+        "<li><strong>Red points — new assessments.</strong> Cases not used to build the tool, including something like Isla’s next mark.</li>" +
         "<li><strong>Dashed line — simple pattern.</strong> The broad trend the new points still follow.</li>" +
-        "<li><strong>Solid line — current fit.</strong> What the slider controls: near the dashed pattern on the left; through every blue point on the right.</li>" +
-        "<li><strong>Two fit percentages.</strong> How close the solid line is to blues vs reds. They can move in opposite directions.</li>" +
-        "</ol>" +
-        "<p>Leave the slider on the left and note both percentages. Then move it right until the solid line threads every blue point. " +
-        "Watch for past fit rising while new fit falls — that is the common failure mode behind a past-only claim.</p>";
+        "<li><strong>Solid line — what you set.</strong> Left stays near the dashed pattern; right threads every blue point.</li>" +
+        "<li><strong>Two match percentages.</strong> How close the solid line is to blues vs reds — they can swing opposite ways.</li>" +
+        "</ol>";
       flow.append(step2);
 
       const stepTry = el("section", { className: "guided-step" });
       stepTry.innerHTML =
         '<p class="step-label">Step 3 — Try the chart</p>' +
-        "<h2>Change the fit and watch both colours</h2>" +
-        "<p>Use the slider below. Change one setting, then read the short summary under the chart before you move on.</p>";
+        "<h2>Change the line and watch both colours</h2>" +
+        "<p>Start on the left, then drag right until the solid line hits every blue point. " +
+        "Watch whether the past % rises while the new % falls — looking perfect on old marks in one move.</p>";
       stepTry.append(vizPane, outcomeSummary);
       flow.append(stepTry);
 
       const step3 = el("section", { className: "guided-step" });
       step3.innerHTML =
         '<p class="step-label">Step 4 — Decide</p>' +
-        "<h2>From the picture back to the claim</h2>" +
+        "<h2>Back to Isla’s 62</h2>" +
         "<p>A line can look excellent on past students and weak on new assessments at the same time. " +
-        "“Accurate on past results” can be true about the blues and still be a poor reason to trust 62 for the next assessment. " +
-        "Read the takeaway, then choose trust, question, or reject.</p>";
+        "“Accurate on past results” can be true about the blues and still be a poor reason to trust 62 for the next assessment.</p>";
       step3.append(take);
       flow.append(step3);
 
       further = el("section", { className: "further-block" });
       further.innerHTML =
-        "<h2>Going further — training, test, and overfitting</h2>" +
-        "<p>Optional detail for keen readers. The short path above is enough for a calibrated takeaway.</p>" +
+        "<h2>Going further — why past success can mislead</h2>" +
         furtherBodyGuided;
       flow.append(further);
       if (global.CS4098.ui && global.CS4098.ui.nextModule) {
@@ -399,27 +382,18 @@
 
       root.append(flow);
     } else {
-      // Variant A: Seeing Theory — left copy column + right stage (both scale)
+      // Graph-first: left copy column + right stage (both scale)
       const claim = el("div", { className: "claim" });
       claim.innerHTML = claimHtml;
 
       const orient = el("p", {
-        className: "lede",
-        text:
-          "Read the claim first. Then try the chart: drag the slider and watch the two fit numbers move in opposite directions — before you decide what Isla should do.",
+        className: "after-claim",
+        text: "Move the slider. Watch how well the line matches past students (blue) and new assessments (red).",
       });
-
-      const proseAbove = el("div", { className: "prose" });
-      proseAbove.append(
-        el("p", {
-          text:
-            "Blue circles are past students the tool was fitted to. Red squares are new assessments. A line that hits every past mark can still miss what comes next — Domingos’s “illusion of success.”",
-        })
-      );
 
       further = el("details", { className: "further" });
       further.innerHTML =
-        "<summary>Going further — the mathematical idea</summary>" +
+        "<summary>Going further — why past success can mislead</summary>" +
         furtherBodyShort;
 
       let nextEl = null;
@@ -430,14 +404,14 @@
         );
       }
 
-      // “What just changed” on the stage — deferred until first interact (Design)
+      // “What just changed” on the stage — deferred until first interact
       vizPane.append(outcomeSummary);
 
-      // Split copy so mobile order is claim → chart → takeaway (Design flow)
+      // Split copy so mobile order is claim → chart → Your call
       const copyAbove = el("div", {
         className: "module-copy module-copy--above",
       });
-      copyAbove.append(kicker, title, claim, orient, proseAbove);
+      copyAbove.append(kicker, title, claim, orient);
 
       const copyBelow = el("div", {
         className: "module-copy module-copy--below",
@@ -454,12 +428,12 @@
       split.append(copyStack, vizPane);
       root.append(split);
 
-      take._flowAlsoHide = [further, nextEl, outcomeSummary];
+      take._flowAlsoHide = [further, nextEl];
+      take._flowWithInteract = [outcomeSummary];
     }
 
-    // Graph-first only: control inactive until Try the chart (Design orient gate)
+    // Graph-first only: control inactive until Try the chart (orient gate)
     let orientGate = null;
-    let takeawayFlow = null;
     let interacted = false;
     if (!guided && global.CS4098.ui && global.CS4098.ui.applyOrientGate) {
       orientGate = global.CS4098.ui.applyOrientGate({
@@ -467,12 +441,13 @@
         mountNear: control,
         stage: vizPane,
         buttonLabel: "Try the chart",
-        hint: "Read the claim on the left first. The chart is a preview until you press Try the chart.",
+        hint: "After you’ve read the claim at the top of the page, try the chart.",
       });
       if (global.CS4098.ui.deferTakeawayUntilInteract) {
         takeawayFlow = global.CS4098.ui.deferTakeawayUntilInteract(take, {
-          hint: "After you try the chart, you’ll decide trust, question, or reject here.",
+          hint: "When you have seen what changes, choose trust, question, or reject.",
           alsoHide: take._flowAlsoHide || [],
+          revealWithInteract: take._flowWithInteract || [],
         });
       }
     }
@@ -540,7 +515,7 @@
       residuals(oldPts, "#4da3ff");
       residuals(newPts, "#ff6b5a");
 
-      // Solid fitted curve
+      // Solid curve for the current slider mix
       ctx.strokeStyle = "#f2f5f7";
       ctx.lineWidth = 2.75;
       ctx.beginPath();
@@ -587,65 +562,56 @@
 
       if (w <= 1) {
         live.textContent =
-          "Simple pattern: stays with the new assessments (" +
+          "Simple pattern: still matches new assessments well (" +
           cNew +
-          "% fit) even though it misses some past bumps (" +
+          "%) even though it misses some past bumps (" +
           cOld +
-          "%). This pattern still tracks the new assessments.";
-        prompt.textContent = "Now drag all the way to the right.";
+          "%).";
+        prompt.textContent = "Drag all the way to the right.";
         if (outcomeP) {
           outcomeP.innerHTML =
-            "The solid line sits on the <strong>simple dashed pattern</strong>. " +
-            "Fit on <strong>new</strong> assessments is about <strong>" +
+            "Simple pattern: new about <strong>" +
             cNew +
-            "%</strong>; fit on <strong>past</strong> students is about <strong>" +
+            "%</strong>, past about <strong>" +
             cOld +
-            "%</strong>, because the blue points zigzag away from that smooth trend. " +
-            "The pattern that still tracks new cases does <em>not</em> look perfect on last year’s marks. " +
-            "Drag the slider slowly right and watch whether past fit rises while new fit falls.";
+            "%</strong>. Drag right — watch past rise while new falls.";
         }
       } else if (w >= 7) {
         live.textContent =
           "Hits every past mark (" +
           cOld +
-          "% fit on blue) — but collapses on new assessments (" +
+          "% on blue) — but collapses on new assessments (" +
           cNew +
-          "% fit on red). That is the illusion: perfect on the past students, weak on what comes next.";
+          "% on red). Perfect on past students, weak on what comes next.";
         prompt.textContent = "Notice the two big numbers: one high, one low.";
         if (outcomeP) {
           outcomeP.innerHTML =
-            "The solid line now threads <strong>every blue point</strong> (past fit about <strong>" +
+            "Past <strong>" +
             cOld +
-            "%</strong>). That is what “accurate on past results” can mean: the fit chased last year’s students until the misses vanished. " +
-            "At the same time, fit on the <strong>red</strong> points has dropped to about <strong>" +
+            "%</strong> vs new <strong>" +
             cNew +
-            "%</strong>. Those new assessments still follow the dashed pattern; the wiggly solid line does not. " +
-            "Both can be true at once: the tool looked excellent on the students it was fitted to, and that is still a weak reason to trust Isla’s <strong>62</strong>. " +
-            "Use the Takeaway to choose trust, question, or reject.";
+            "%</strong>. Perfect on last year is still a weak reason to trust Isla’s <strong>62</strong> — choose trust, question, or reject.";
         }
       } else {
         live.textContent =
-          "Past fit " +
+          "Past match " +
           cOld +
-          "% · new fit " +
+          "% · new match " +
           cNew +
           "%. Keep dragging right until the solid line threads every blue point.";
         prompt.textContent = "Keep going — the gap should get obvious.";
         if (outcomeP) {
           outcomeP.innerHTML =
-            "Past fit is about <strong>" +
+            "Past <strong>" +
             cOld +
-            "%</strong> and new fit about <strong>" +
+            "%</strong> · new <strong>" +
             cNew +
-            "%</strong>. " +
-            "As the solid line bends toward the blue zigzags, it leaves the dashed pattern — and the red points on that pattern. " +
-            "Improving the look on past students is starting to cost performance on new assessments. " +
-            "Keep going until the contrast is clear, then use the Takeaway.";
+            "%</strong>. Keep dragging until past is high and new drops.";
         }
       }
     }
 
-    // First interact reveals the deferred takeaway (Graph-first Design order)
+    // First interact reveals the deferred Your call (Graph-first order)
     slider.addEventListener("input", function () {
       if (!guided && orientGate && !orientGate.isLocked()) {
         if (!interacted) {
@@ -677,12 +643,7 @@
       reset: function () {
         slider.value = "0";
         interacted = false;
-        choices.querySelectorAll(".choice").forEach(function (c) {
-          c.setAttribute("aria-pressed", "false");
-        });
-        feedback.hidden = true;
-        feedback.innerHTML = "";
-        feedback.removeAttribute("data-tone");
+        takeaway.reset();
         if (further && further.tagName === "DETAILS") further.open = false;
         if (orientGate) orientGate.lock();
         if (takeawayFlow) takeawayFlow.reset();

@@ -38,6 +38,8 @@
 
   function parseRoute() {
     const hash = (location.hash || "#home").replace(/^#/, "");
+    // #sources lives on the home page (scroll target after render)
+    if (hash === "sources") return "home";
     return MODULE_ORDER.indexOf(hash) !== -1 ? hash : "home";
   }
 
@@ -92,14 +94,15 @@
       '<div class="home-intro">' +
       '<p class="chapter-kicker">Three modules</p>' +
       "<h1>Calibrated trust in numbers</h1>" +
-      '<p class="lede">The aim is not to increase trust in AI. It is calibrated trust: knowing when to trust, question, or reject a metric claim.</p>' +
-      "<p>Each module starts from an everyday numbered claim, then a short interactive graph or count display. " +
-      "Success is being able to say, in plain words, what the figure showed and when you would trust, question, or reject a similar claim. " +
-      "Use <em>Graph-first</em> for a short session, or <em>More guidance</em> for a slower step-by-step path. " +
-      "Precise terms sit under Going further.</p>" +
+      '<p class="lede">Not “trust AI more” — just know when a number is enough to trust, when to question it, and when to reject what it is being used to claim.</p>' +
+      "<p>Each page is a short story with a number attached — Isla’s grade predictor, Claire’s news headline, Isla’s writing helper. " +
+      "Use the chart or the counts, then choose trust, question, or reject. " +
+      "<em>Graph-first</em> puts the story and the chart up front; <em>More guidance</em> walks you through step by step. " +
+      "Want more detail? Open Going further on each page. " +
+      "Where the ideas come from: <a href=\"#sources\">Sources</a>.</p>" +
       "</div>";
 
-    // Chapter cards — same three ideas as the report modules
+    // Chapter cards — titles match each module H1
     const list = document.createElement("ol");
     list.className = "chapter-list";
 
@@ -119,8 +122,8 @@
       [
         "uncertainty",
         "3",
-        "A single score that hides a range",
-        "Isla’s writing helper shows confidence 82 with no band — enough to accept a rewrite if her cutoff is 75?",
+        "A confidence score that hides a range",
+        "Isla’s writing helper shows confidence score 82 (0–100) with no range — enough to accept a rewrite if her cutoff is 75?",
       ],
     ];
 
@@ -146,7 +149,32 @@
 
     wrap.append(list);
 
+    // Where the ideas come from (plain list; full refs in the project report)
+    const sources = document.createElement("section");
+    sources.className = "home-sources";
+    sources.id = "sources";
+    sources.innerHTML =
+      "<h2>Sources</h2>" +
+      "<p>Isla and Claire’s stories are made up. The lessons behind them come from people who write about when to trust a number:</p>" +
+      "<ul>" +
+      "<li><strong>When to trust a number</strong> — Lee &amp; See (2004), <em>Trust in Automation</em>. Jacovi and colleagues (2021): trust what the screen is claiming, not “the AI” in general. Ahn and colleagues (2024): it helps to see how a prediction turned out.</li>" +
+      "<li><strong>1 · Old data</strong> — Domingos (2012), <em>A Few Useful Things to Know about Machine Learning</em>: looking perfect only on old examples can be an “illusion of success.”</li>" +
+      "<li><strong>2 · Accuracy</strong> — Hoffrage and colleagues (2000); Gigerenzer &amp; Edwards (2003): risks are easier to read as counts (for example out of 1,000) than as bare percentages.</li>" +
+      "<li><strong>3 · Confidence</strong> — Spiegelhalter, <em>The Art of Statistics</em> (2019) and <em>The Art of Uncertainty</em> (2024): say how unsure a number is. Jacovi and colleagues again on trusting the claim on the screen.</li>" +
+      "<li><strong>Clear wording</strong> — Field’s <em>Discovering Statistics</em> books.</li>" +
+      "</ul>" +
+      "<p class=\"home-sources-note\">Full reference list: CS4098 project report.</p>";
+    wrap.append(sources);
+
     els.main.append(wrap);
+
+    // Footer / intro link #sources → scroll after home paints
+    if ((location.hash || "").replace(/^#/, "") === "sources") {
+      requestAnimationFrame(function () {
+        const target = document.getElementById("sources");
+        if (target) target.scrollIntoView({ block: "start" });
+      });
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -169,6 +197,9 @@
 
     // Each module exposes mount(root, { variant }) → { reset, destroy }
     state.active = mod.mount(host, { variant: state.variant });
+    if (window.CS4098.ui && window.CS4098.ui.typesetMath) {
+      window.CS4098.ui.typesetMath(host);
+    }
   }
 
   function render() {

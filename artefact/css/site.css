@@ -24,6 +24,8 @@
   --accent-soft: #d5e6ef;
   --claim-bg: #eef4f8;
   --claim-edge: #2f6f8f;
+  --takeaway-bg: #eef6f1;
+  --takeaway-edge: #2f7a56;
   --blue: #4da3ff;
   --blue-deep: #2b7fd4;
   --red: #ff6b5a;
@@ -242,27 +244,48 @@ h1 {
   font-weight: 400;
 }
 
+/* Claim = the “read me” card: everyday metric claim before any controls */
 .claim {
-  margin: 0 0 1.5rem;
-  padding: 0 0 0 1rem;
-  border-left: 2px solid var(--claim-edge);
-  background: transparent;
+  margin: 0 0 1.35rem;
+  padding: 1rem 1.1rem 1.05rem;
+  border: 1px solid var(--claim-edge);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  background: var(--claim-bg);
   max-width: var(--measure);
+  box-shadow: 0 1px 0 rgba(36, 48, 57, 0.04);
 }
 
 .claim .label {
   display: block;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--claim-edge);
+  margin-bottom: 0.2rem;
+}
+
+.claim .claim-who {
+  display: block;
+  font-size: 0.86rem;
   color: var(--muted);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.55rem;
 }
 
 .claim p {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* Soft follow-on after the claim card (not a “do this first” order bark) */
+.after-claim {
+  font-size: 1.02rem;
+  color: var(--muted);
+  margin: 0 0 1.1rem;
+  max-width: var(--measure);
   line-height: 1.5;
 }
 
@@ -360,6 +383,7 @@ h1 {
   /* Text fills the left column as it grows — no fixed rem ceiling */
   .variant-a .module-copy .claim,
   .variant-a .module-copy .lede,
+  .variant-a .module-copy .after-claim,
   .variant-a .module-copy .prose p,
   .variant-a .module-copy .prose ul,
   .variant-a .module-copy .prose ol,
@@ -373,6 +397,7 @@ h1 {
 @media (max-width: 899px) {
   .variant-a .module-split {
     grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
   }
 
   /* Flatten stack so claim / chart / takeaway can be ordered in flow */
@@ -390,6 +415,71 @@ h1 {
 
   .variant-a .module-split .module-copy--below {
     grid-row: 3;
+  }
+
+  /* Mobile first viewport: claim + start of stage, not a wall of prose */
+  .module-copy--above .chapter-kicker {
+    margin-bottom: 0.3rem;
+  }
+
+  .module-copy--above h1 {
+    font-size: clamp(1.35rem, 5.2vw, 1.7rem);
+    margin-bottom: 0.65rem;
+    line-height: 1.2;
+  }
+
+  .claim {
+    margin: 0 0 0.75rem;
+    padding: 0.8rem 0.85rem 0.85rem;
+  }
+
+  .claim .label {
+    font-size: 0.65rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .claim .claim-who {
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .claim p {
+    font-size: 0.98rem;
+    line-height: 1.4;
+  }
+
+  .after-claim {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0 0 0.75rem;
+  }
+
+  .stage-key {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    padding: 0.55rem 0.65rem;
+    margin: 0 0 0.65rem;
+  }
+
+  .stage-key-title {
+    font-size: 0.62rem;
+  }
+
+  .stage-key li {
+    margin: 0.2rem 0;
+  }
+
+  .drag-prompt,
+  .param-note {
+    font-size: 0.78rem;
+  }
+
+  .compare-label {
+    font-size: 0.6rem;
+  }
+
+  .compare-num {
+    font-size: clamp(1.45rem, 6vw, 1.85rem);
   }
 }
 
@@ -468,19 +558,115 @@ h1 {
   }
 }
 
-/* Graph-first: takeaway waits until first chart use */
-.is-flow-deferred {
+/* Graph-first: judgement waits until first chart use;
+   takeaway verdict waits until trust / question / reject */
+.is-flow-deferred,
+.is-choice-deferred {
   display: none !important;
 }
 
 .flow-next-hint {
-  margin: 1rem 0 0;
-  padding: 0.75rem 0.85rem;
-  border-left: 3px solid var(--blue);
+  margin: 0.75rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border-left: 2px solid var(--blue);
   background: color-mix(in srgb, var(--blue) 8%, #fff);
-  font-size: 0.92rem;
-  line-height: 1.45;
+  font-size: 0.86rem;
+  line-height: 1.4;
   color: var(--muted);
+}
+
+/* How-to-read sits on the dark stage (not only in left copy).
+   details: open beside the figure on desktop; collapsed by default on mobile
+   so claim + chart fit the first viewport. */
+.stage-key {
+  margin: 0.65rem 0 0.85rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #2a333c;
+  border-left: 3px solid var(--blue);
+  background: #12171c;
+  color: #c5d0da;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.stage-key > summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #e8eef4;
+  padding: 0.2rem 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.35rem;
+}
+
+.stage-key > summary::-webkit-details-marker {
+  display: none;
+}
+
+.stage-key-more {
+  font-size: 0.9em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: #9aa8b5;
+}
+
+.stage-key > summary::after {
+  content: "Show";
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--blue);
+  border: 1px solid color-mix(in srgb, var(--blue) 45%, #2a333c);
+  border-radius: var(--radius);
+  padding: 0.15rem 0.45rem;
+  line-height: 1.2;
+}
+
+.stage-key[open] > summary::after {
+  content: "Hide";
+}
+
+.stage-key[open] .stage-key-more {
+  display: none;
+}
+
+.stage-key ul {
+  margin: 0.45rem 0 0.15rem;
+  padding-left: 1.05rem;
+}
+
+.stage-key li {
+  margin: 0.25rem 0;
+}
+
+.stage-key strong,
+.stage-key em {
+  color: #e8eef4;
+  font-style: normal;
+}
+
+.stage-key em {
+  font-style: italic;
+}
+
+@media (min-width: 900px) {
+  /* Desktop: key stays open beside the figure; no collapse chrome */
+  .stage-key > summary {
+    cursor: default;
+  }
+
+  .stage-key > summary::after,
+  .stage-key-more {
+    display: none;
+  }
 }
 
 /* Short “why these numbers / this control” notes on the stage */
@@ -631,14 +817,151 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 
 @media (min-width: 900px) {
   .variant-b .viz-pane--compact {
-    /* Tall stage band so the chart reads as a full-width panel, not a card */
-    padding: clamp(1.1rem, 2vw, 1.6rem);
+    padding: clamp(0.9rem, 1.6vw, 1.25rem);
   }
 
   .variant-b .viz-pane--compact canvas {
     width: 100%;
     height: auto;
   }
+}
+
+/*
+  Stage hierarchy (naive user):
+  M1 — chart + two match % are the story; outcome is the short “notice”; meters/live are quiet.
+  M2 — large % under the tree is the answer; tree supports it; outcome glosses the %; live quiet.
+  M3 — decision verdict is the punchline; score line shows why; outcome is a soft echo.
+*/
+
+/* Module 1 */
+.viz-pane:has(canvas) {
+  padding: clamp(0.75rem, 1.2vw, 1.05rem);
+}
+
+.viz-pane:has(canvas) .compare-strip {
+  margin-bottom: 0.55rem;
+  gap: 0.45rem;
+}
+
+.viz-pane:has(canvas) .compare-card {
+  padding: 0.55rem 0.65rem 0.6rem;
+}
+
+.viz-pane:has(canvas) .compare-num {
+  /* Punchline numbers — past vs new */
+  font-size: clamp(1.55rem, 3.8vw, 2rem);
+}
+
+.viz-pane:has(canvas) .legend {
+  margin: 0.3rem 0 0.05rem;
+  font-size: 0.78rem;
+  gap: 0.4rem 0.85rem;
+}
+
+.viz-pane:has(canvas) .meters {
+  gap: 0.3rem;
+  margin-top: 0.1rem;
+  opacity: 0.92;
+}
+
+.viz-pane:has(canvas) .meter {
+  font-size: 0.7rem;
+}
+
+.viz-pane:has(canvas) .control {
+  margin-top: 0.55rem;
+}
+
+.viz-pane:has(canvas) > .outcome-summary {
+  /* Notice board under the chart — readable, not tiny */
+  font-size: 0.95rem;
+  line-height: 1.4;
+  padding: 0.7rem 0.8rem;
+  margin-top: 0.65rem;
+  border-left-width: 3px;
+}
+
+/* Module 2 */
+.viz-pane:has(.tree) {
+  padding: clamp(0.75rem, 1.2vw, 1.05rem);
+}
+
+.viz-pane:has(.tree) .field {
+  margin-bottom: 0.45rem;
+}
+
+.viz-pane:has(.tree) .tree {
+  font-size: 0.8rem;
+}
+
+.viz-pane:has(.tree) .tree-row {
+  margin: 0.14rem 0;
+  padding: 0.3rem 0.5rem;
+}
+
+.viz-pane:has(.tree) .tree-indent {
+  margin-left: 0.55rem;
+  padding-left: 0.4rem;
+}
+
+.viz-pane:has(.tree) .ppv-hero {
+  margin-top: 0.5rem;
+  padding: 0.65rem 0 0.2rem;
+}
+
+.viz-pane:has(.tree) .ppv-hero .ppv-question {
+  margin-bottom: 0.25rem;
+  font-size: 0.84rem;
+}
+
+.viz-pane:has(.tree) .ppv-hero .ppv-big {
+  /* Claire’s answer — largest mark on this stage */
+  font-size: clamp(2.15rem, 6vw, 2.9rem);
+}
+
+.viz-pane:has(.tree) .ppv-hero .ppv-explain {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.viz-pane:has(.tree) > .outcome-summary {
+  /* Gloss under the big % — clear, slightly smaller than M1 notice */
+  font-size: 0.9rem;
+  line-height: 1.38;
+  padding: 0.65rem 0.75rem;
+  margin-top: 0.55rem;
+  border-left-width: 3px;
+}
+
+/* Module 3 */
+.viz-pane:has(.score-line) .decision-hero {
+  padding: 0.85rem 0.9rem 0.9rem;
+  margin-bottom: 0.7rem;
+}
+
+.viz-pane:has(.score-line) .decision-verdict {
+  /* Accept vs flip — the thing to notice */
+  font-size: clamp(1.2rem, 2.8vw, 1.4rem);
+  margin-bottom: 0.4rem;
+}
+
+.viz-pane:has(.score-line) .decision-explain {
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.viz-pane:has(.score-line) .compare-num {
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
+}
+
+.viz-pane:has(.score-line) > .outcome-summary {
+  /* Soft echo of the decision hero — don’t compete with it */
+  font-size: 0.84rem;
+  line-height: 1.35;
+  padding: 0.5rem 0.65rem;
+  margin-top: 0.5rem;
+  border-left-color: #3a4550;
+  background: transparent;
 }
 
 .compare-strip {
@@ -846,36 +1169,88 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 }
 
 /* ---------------------------------------------------------------------------
-   Takeaway (trust / question / reject)
+   Your call + Takeaway — clear close to the lesson, secondary to claim + stage
    --------------------------------------------------------------------------- */
 .takeaway {
-  margin-top: 1.75rem;
-  padding-top: 1.25rem;
+  margin-top: 1.15rem;
+  padding: 0.85rem 0 0.15rem;
   border-top: 1px solid var(--rule);
   max-width: var(--measure);
 }
 
-.takeaway h2 {
+.takeaway-decide h2,
+.takeaway-verdict h2 {
   margin-top: 0;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
+.takeaway-decide .decide-restate {
+  margin: 0.4rem 0 0.55rem;
+  padding: 0.55rem 0.7rem;
+  border-left: 2px solid var(--claim-edge);
+  background: color-mix(in srgb, var(--claim-bg) 70%, #fff);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.takeaway-decide .note {
+  margin: 0.25rem 0 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Conclusion — readable, not a second hero card */
+.takeaway-verdict {
+  margin-top: 0.85rem;
+  padding: 0.7rem 0.8rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--takeaway-edge) 45%, var(--rule));
+  border-left-width: 3px;
+  border-left-color: var(--takeaway-edge);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--takeaway-bg) 75%, #fff);
+}
+
+.takeaway-verdict h2 {
+  color: var(--takeaway-edge);
+  margin-bottom: 0.25rem;
+}
+
 .takeaway .verdict {
   font-family: var(--serif);
-  font-size: 1.12rem;
-  line-height: 1.55;
-  margin: 0.5rem 0 1rem;
+  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+  line-height: 1.45;
+  margin: 0;
+  color: var(--ink);
+}
+
+.takeaway-verdict.is-takeaway-flash {
+  animation: takeawayFlash 0.7s ease;
+}
+
+@keyframes takeawayFlash {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--takeaway-edge) 28%, transparent);
+  }
+  40% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--takeaway-edge) 14%, transparent);
+  }
+  100% {
+    box-shadow: none;
+  }
 }
 
 .choices {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin: 0.5rem 0 0.75rem;
+  margin: 0.45rem 0 0.55rem;
 }
 
 .choice {
@@ -883,10 +1258,10 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
   border: 1px solid var(--rule);
   background: #fff;
   font: inherit;
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius);
   cursor: pointer;
   color: var(--ink);
 }
@@ -902,8 +1277,8 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 }
 
 .choice-feedback {
-  margin-top: 0.75rem;
-  padding: 1rem 1.05rem;
+  margin-top: 0.5rem;
+  padding: 0.65rem 0.75rem;
   background: #fff;
   border-left: 2px solid var(--rule);
   max-width: var(--measure);
@@ -920,8 +1295,8 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 }
 
 .choice-feedback .feedback-kicker {
-  margin: 0 0 0.2rem;
-  font-size: 0.68rem;
+  margin: 0 0 0.15rem;
+  font-size: 0.62rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -937,17 +1312,17 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 }
 
 .choice-feedback h3 {
-  font-size: 1.02rem;
+  font-size: 0.92rem;
   font-weight: 600;
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.3rem;
   letter-spacing: -0.02em;
 }
 
 .choice-feedback p {
   margin: 0;
   font-family: var(--serif);
-  font-size: 1.02rem;
-  line-height: 1.55;
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .further {
@@ -986,14 +1361,28 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 .further .formula,
 .further-block .formula {
   display: block;
-  margin: 0.65rem 0;
-  padding: 0.7rem 0.85rem;
+  margin: 0.75rem 0;
+  padding: 0.85rem 1rem;
   background: #fff;
-  border-left: 2px solid var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
   font-family: var(--mono);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-style: normal;
   overflow-x: auto;
+  text-align: center;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.further .formula .katex,
+.further-block .formula .katex {
+  font-size: 1.15em;
+}
+
+.further .formula .katex-display,
+.further-block .formula .katex-display {
+  margin: 0;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1065,6 +1454,50 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
   line-height: 1.45;
 }
 
+/* Home Sources — attributions for the teaching stories */
+.home-sources {
+  max-width: min(52rem, 100%);
+  margin: 2.75rem 0 0;
+  padding-top: 1.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--muted) 28%, transparent);
+}
+
+.home-sources h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.65rem;
+  letter-spacing: -0.02em;
+}
+
+.home-sources p,
+.home-sources li {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.home-sources ul {
+  margin: 0.75rem 0 0.85rem;
+  padding-left: 1.15rem;
+}
+
+.home-sources li {
+  margin-bottom: 0.45rem;
+}
+
+.home-sources-note {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.home-intro a,
+.home-sources a,
+.site-footer a,
+.further a,
+.further-block a {
+  color: var(--accent);
+}
+
 /* ---------------------------------------------------------------------------
    More guidance: workbook steps (full main width; readable prose measure)
    --------------------------------------------------------------------------- */
@@ -1083,6 +1516,7 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 .variant-b main > .chapter-kicker,
 .variant-b main > h1,
 .variant-b .lede,
+.variant-b .after-claim,
 .variant-b .claim,
 .variant-b .prose p,
 .variant-b .prose ul,
@@ -1131,7 +1565,7 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 
 /*
   More guidance nests the dark stage inside .guided-step. The prose rule above
-  would paint legend / live / badge copy with paper ink (#243039) on #12161a
+  would paint legend / live / decision copy with paper ink (#243039) on #12161a
   (contrast ~1.3). Reset stage paragraphs to inherit the stage palette.
 */
 .guided-step .viz-pane p {
@@ -1150,17 +1584,13 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 .guided-step .viz-pane .axis-caption,
 .guided-step .viz-pane .meter,
 .guided-step .viz-pane .compare-label,
-.guided-step .viz-pane .badge-kicker,
-.guided-step .viz-pane .badge-note,
 .guided-step .viz-pane .decision-rule,
 .guided-step .viz-pane .field label,
-.guided-step .viz-pane .confidence-badge-label,
 .guided-step .viz-pane .score-labels {
   color: var(--stage-muted);
 }
 
 .guided-step .viz-pane .live,
-.guided-step .viz-pane .badge-draft,
 .guided-step .viz-pane .decision-explain,
 .guided-step .viz-pane .compare-num,
 .guided-step .viz-pane .meter .val {
@@ -1188,16 +1618,16 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 }
 
 .outcome-summary {
-  margin: 0.85rem 0 0;
-  padding: 1rem 1.05rem;
+  margin: 0.65rem 0 0;
+  padding: 0.75rem 0.85rem;
   background: #fff;
   border-left: 2px solid var(--accent);
   font-family: var(--serif);
-  font-size: 1.05rem;
-  line-height: 1.55;
+  font-size: 0.98rem;
+  line-height: 1.42;
 }
 
-/* Graph-first: outcome lives on the dark stage */
+/* Graph-first default (overridden per module above) */
 .viz-pane > .outcome-summary {
   background: #12171c;
   border: 1px solid #2a333c;
@@ -1217,12 +1647,26 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 .outcome-summary .outcome-label {
   display: block;
   font-family: var(--sans);
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
   font-weight: 600;
+}
+
+/* Once the notice is on screen, hide the duplicate live line visually (keep for a11y) */
+.viz-pane:has(.outcome-summary:not(.is-flow-deferred)) .live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  min-height: 0;
 }
 
 .further-block {
@@ -1398,10 +1842,12 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 }
 
 /* ---------------------------------------------------------------------------
-   Module 3: badge → band + decision flip on stage
+   Module 3: score / range + decision flip on stage
+   Live UI uses compare strip, decision hero, and .score-line (no badge chrome).
+   .badge-* rules below are unused leftovers from an earlier prototype.
    --------------------------------------------------------------------------- */
 
-/* Fake product chrome — lone confidence badge (misleading start state) */
+/* Unused — earlier lone-badge chrome (kept so old class names do not break) */
 .badge-chrome {
   background: var(--stage-2);
   border: 1px solid #2a333c;
@@ -1587,20 +2033,128 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
   color: var(--muted);
 }
 
+.site-footer a {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
 @media (max-width: 560px) {
   main {
-    padding: 1.25rem var(--frame-pad) 3rem;
+    padding: 1rem var(--frame-pad) 2.5rem;
   }
 
   .site-header-inner {
-    padding: 0.85rem var(--frame-pad);
+    padding: 0.75rem var(--frame-pad);
   }
 
   h1 {
-    font-size: 1.65rem;
+    font-size: 1.45rem;
+  }
+
+  .module-copy--above h1 {
+    font-size: 1.35rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .claim {
+    margin: 0 0 0.65rem;
+    padding: 0.7rem 0.75rem;
+  }
+
+  .claim p {
+    font-size: 0.94rem;
+    line-height: 1.38;
+  }
+
+  .after-claim {
+    font-size: 0.86rem;
+    margin: 0 0 0.6rem;
   }
 
   .viz-pane {
-    padding: 0.9rem;
+    padding: 0.65rem;
+  }
+
+  .stage-key {
+    font-size: 0.74rem;
+    padding: 0.45rem 0.5rem;
+  }
+
+  .meters {
+    gap: 0.35rem;
+  }
+
+  .control .ends {
+    font-size: 0.72rem;
+  }
+
+  /* Mobile: keep module hierarchy, trim chrome only */
+  .viz-pane:has(canvas) > .outcome-summary {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.7rem;
+    margin-top: 0.5rem;
+  }
+
+  .viz-pane:has(.tree) > .outcome-summary {
+    font-size: 0.86rem;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .viz-pane:has(.score-line) > .outcome-summary {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.55rem;
+  }
+
+  .viz-pane:has(canvas) .compare-num {
+    font-size: clamp(1.4rem, 6vw, 1.75rem);
+  }
+
+  .viz-pane:has(.tree) .ppv-hero .ppv-big {
+    font-size: clamp(1.95rem, 8vw, 2.5rem);
+  }
+
+  .outcome-summary {
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .viz-pane .drag-prompt {
+    font-size: 0.78rem;
+    margin: 0.2rem 0;
+  }
+
+  .ppv-hero .ppv-explain {
+    font-size: 0.76rem;
+  }
+
+  /* Bottom judgement block: compact so stage stays the main mass */
+  .takeaway {
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+  }
+
+  .takeaway-decide .decide-restate {
+    font-size: 0.88rem;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .takeaway .verdict {
+    font-size: 0.92rem;
+  }
+
+  .choice {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  .choice-feedback p {
+    font-size: 0.86rem;
+    line-height: 1.4;
+  }
+
+  .takeaway-verdict {
+    margin-top: 0.7rem;
+    padding: 0.6rem 0.7rem;
   }
 }

@@ -19,14 +19,25 @@
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23243039'/%3E%3Ccircle cx='11' cy='16' r='4' fill='%234da3ff'/%3E%3Crect x='18' y='12' width='8' height='8' fill='%23ff6b5a'/%3E%3C/svg%3E"
   />
   <!-- Shared layout and theme (Seeing Theory–inspired stage + cool wash) -->
-  <link rel="stylesheet" href="css/site.css?v=flow20" />
+  <link rel="stylesheet" href="css/site.css?v=flow54" />
+  <!-- KaTeX for Going further formulas (CDN; plain-text fallback in markup) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+    crossorigin="anonymous"
+  />
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+    crossorigin="anonymous"
+  ></script>
 </head>
 <body class="variant-a">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- Page frame: keeps reading width steady on wide / maximised screens -->
   <div class="site-frame">
-    <!-- Site chrome: title, module links, layout toggle, restart -->
+    <!-- Header: title, module links (Old data / Accuracy / Confidence), layout toggle, restart -->
     <header class="site-header">
       <div class="site-header-inner">
         <p class="site-title"><a href="#home">Calibrated trust</a></p>
@@ -35,12 +46,12 @@
           <a href="#home" data-route="home">Contents</a>
           <a href="#fit" data-route="fit">1 · Old data</a>
           <a href="#baserate" data-route="baserate">2 · Accuracy</a>
-          <a href="#uncertainty" data-route="uncertainty">3 · Score</a>
+          <a href="#uncertainty" data-route="uncertainty">3 · Confidence</a>
         </nav>
 
         <div class="header-tools">
-          <!-- Variant A = graph-first; Variant B = more guidance (report FR4) -->
-          <div class="seg" id="variant-seg" role="group" aria-label="Page layout">
+          <!-- Graph-first vs More guidance (two layouts, same lessons) -->
+          <div class="seg" id="variant-seg" role="group" aria-label="Reading mode">
             <button type="button" data-variant="a" aria-pressed="true">Graph-first</button>
             <button type="button" data-variant="b" aria-pressed="false">More guidance</button>
           </div>
@@ -53,15 +64,15 @@
     <main id="main" tabindex="-1"></main>
 
     <footer class="site-footer">
-      CS4098 · Omar Raza (230013491)
+      CS4098 · Omar Raza (230013491) · <a href="#sources">Sources</a>
     </footer>
   </div>
 
   <!-- Helpers first, then modules, then shell router -->
-  <script src="js/lib/ui.js?v=flow20"></script>
-  <script src="js/modules/fit.js?v=flow20"></script>
-  <script src="js/modules/baserate.js?v=flow20"></script>
-  <script src="js/modules/uncertainty.js?v=flow20"></script>
-  <script src="js/app.js?v=flow20"></script>
+  <script src="js/lib/ui.js?v=flow54"></script>
+  <script src="js/modules/fit.js?v=flow54"></script>
+  <script src="js/modules/baserate.js?v=flow54"></script>
+  <script src="js/modules/uncertainty.js?v=flow54"></script>
+  <script src="js/app.js?v=flow54"></script>
 </body>
 </html>

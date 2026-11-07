@@ -1,9 +1,10 @@
 /**
  * Author: Omar Raza
  * Student ID: 230013491
- * Description: Shared helpers for every module — DOM create, takeaway chips,
- * next-module link, Graph-first orient gate, deferred takeaway, outcome flash,
- * and mobile stage expand. Modules and the shell read these via CS4098.ui.
+ * Description: Shared helpers for every module — DOM create, Your call +
+ * Takeaway, next-module link, Graph-first orient gate, deferred Your call /
+ * Going further, outcome flash, KaTeX for Going further, and mobile stage
+ * expand. Modules and the shell read these via CS4098.ui.
  */
 
 (function (global) {
@@ -41,41 +42,78 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Takeaway: verdict + Trust / Question / Reject with feedback
+  // Your call first; Takeaway only after a choice
   // ---------------------------------------------------------------------------
 
   /**
-   * Build the end-of-module takeaway (report FR3).
+   * Build end-of-module Your call + Takeaway.
+   * Order: restate the claim → trust / question / reject → choice feedback
+   * → Takeaway (revealed only after a choice so the verdict does not spoil).
    *
+   * opts.restateHtml — claim in different words, shown before the buttons
    * opts.verdictHtml — plain-language conclusion (HTML string)
    * opts.prompt — optional line above the three buttons
    * opts.judgement — { trust|question|reject: { tone, title, body } }
    *   tone is "calibrated" or "miscalibrated" (styles the feedback panel)
+   * opts.onJudged — optional callback after the first choice (e.g. reveal
+   *   Going further / next on Graph-first)
    *
-   * Returns { el, reset } so Restart can clear the choice.
+   * Returns { el, reset, verdictEl }.
    */
   function buildTakeaway(opts) {
     const wrap = el("div", { className: "takeaway" });
 
-    wrap.innerHTML =
-      "<h2>Takeaway</h2>" +
-      '<p class="verdict">' +
-      opts.verdictHtml +
-      "</p>" +
+    const decide = el("div", { className: "takeaway-decide" });
+    decide.innerHTML =
+      "<h2>Your call</h2>" +
+      (opts.restateHtml
+        ? '<p class="decide-restate">' + opts.restateHtml + "</p>"
+        : "") +
       '<p class="note">' +
-      (opts.prompt ||
-        "Would you trust, question, or reject this claim? Each choice gets a short response.") +
+      (opts.prompt || "Would you trust, question, or reject this claim?") +
       "</p>";
 
     const choices = el("div", {
       className: "choices",
-      attrs: { role: "group", "aria-label": "Your judgement" },
+      attrs: { role: "group", "aria-label": "Your call" },
     });
 
     const feedback = el("div", {
       className: "choice-feedback",
       attrs: { "aria-live": "polite", hidden: "true" },
     });
+
+    const verdictBlock = el("div", {
+      className: "takeaway-verdict is-choice-deferred",
+    });
+    verdictBlock.innerHTML =
+      "<h2>Takeaway</h2>" +
+      '<p class="verdict">' +
+      opts.verdictHtml +
+      "</p>";
+
+    let judged = false;
+
+    function revealVerdict() {
+      verdictBlock.classList.remove("is-choice-deferred");
+      verdictBlock.removeAttribute("aria-hidden");
+      verdictBlock.classList.remove("is-takeaway-flash");
+      void verdictBlock.offsetWidth;
+      verdictBlock.classList.add("is-takeaway-flash");
+      try {
+        verdictBlock.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } catch (e) {
+        /* ignore */
+      }
+    }
+
+    function hideVerdict() {
+      verdictBlock.classList.add("is-choice-deferred");
+      verdictBlock.setAttribute("aria-hidden", "true");
+      verdictBlock.classList.remove("is-takeaway-flash");
+    }
+
+    hideVerdict();
 
     const labels = [
       ["trust", "I would trust it"],
@@ -95,7 +133,6 @@
       });
 
       button.addEventListener("click", function () {
-        // Only one choice pressed at a time
         choices.querySelectorAll(".choice").forEach(function (c) {
           c.setAttribute("aria-pressed", "false");
         });
@@ -107,29 +144,39 @@
         feedback.innerHTML =
           '<p class="feedback-kicker">' +
           (j.tone === "calibrated"
-            ? "Calibrated judgement"
-            : "Miscalibrated for this claim") +
+            ? "Fits this claim"
+            : "Too strong for this claim") +
           "</p><h3>" +
           j.title +
           "</h3><p>" +
           j.body +
           "</p>";
+
+        revealVerdict();
+        if (!judged) {
+          judged = true;
+          if (typeof opts.onJudged === "function") opts.onJudged();
+        }
       });
 
       choices.append(button);
     });
 
-    wrap.append(choices, feedback);
+    decide.append(choices);
+    wrap.append(decide, feedback, verdictBlock);
 
     return {
       el: wrap,
+      verdictEl: verdictBlock,
       reset: function () {
+        judged = false;
         choices.querySelectorAll(".choice").forEach(function (c) {
           c.setAttribute("aria-pressed", "false");
         });
         feedback.hidden = true;
         feedback.innerHTML = "";
         feedback.removeAttribute("data-tone");
+        hideVerdict();
       },
     };
   }
@@ -151,7 +198,7 @@
 
   // ---------------------------------------------------------------------------
   // Graph-first orient gate: stage visible, control inactive until one advance
-  // (report Design: orient before interact)
+  // (read the claim first, then Try the chart / tree / Widen the range)
   // ---------------------------------------------------------------------------
 
   /**
@@ -173,13 +220,11 @@
 
     const bar = el("div", {
       className: "orient-gate",
-      attrs: { role: "region", "aria-label": "Try the interactive chart" },
+      attrs: { role: "region", "aria-label": "Start exploring" },
     });
     const hint = el("p", {
       className: "orient-gate-hint",
-      text:
-        opts.hint ||
-        "Read the claim first. The chart is a preview until you press Try the chart.",
+      text: opts.hint || "After you’ve read the claim at the top of the page, try the chart.",
     });
     const btn = el("button", {
       type: "button",
@@ -240,23 +285,28 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Graph-first flow: hide takeaway until first chart use (Design order)
+  // Graph-first flow: hide Your call until first stage use
   // ---------------------------------------------------------------------------
 
   /**
-   * Defer judgement UI until after Try the chart + first meaningful interact.
-   * Shows a short placeholder so the path stays clear.
+   * Graph-first order:
+   * - hide Your call until first chart / tree / range use (reveal)
+   * - revealWithInteract extras (e.g. “What just changed”) show with Your call
+   * - alsoHide (Going further / next) wait until after trust/question/reject
+   *   via revealAfterJudgement()
    */
   function deferTakeawayUntilInteract(takeawayEl, opts) {
     opts = opts || {};
     const alsoHide = opts.alsoHide || [];
+    const withInteract = opts.revealWithInteract || [];
     const placeholder = el("p", {
       className: "flow-next-hint",
       text:
         opts.hint ||
-        "After you try the chart, you’ll decide trust, question, or reject here.",
+        "When you have seen what changes, choose trust, question, or reject.",
     });
     let revealed = false;
+    let afterJudged = false;
 
     function setDeferred(node, deferred) {
       if (!node) return;
@@ -271,15 +321,11 @@
 
     function hideAll() {
       setDeferred(takeawayEl, true);
-      alsoHide.forEach(function (node) {
+      withInteract.forEach(function (node) {
         setDeferred(node, true);
       });
-    }
-
-    function showAll() {
-      setDeferred(takeawayEl, false);
       alsoHide.forEach(function (node) {
-        setDeferred(node, false);
+        setDeferred(node, true);
       });
     }
 
@@ -292,18 +338,38 @@
       if (revealed) return;
       revealed = true;
       if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
-      showAll();
+      // Your call (+ outcome); Going further / next wait for a choice
+      setDeferred(takeawayEl, false);
+      withInteract.forEach(function (node) {
+        setDeferred(node, false);
+      });
+    }
+
+    function revealAfterJudgement() {
+      if (afterJudged) return;
+      afterJudged = true;
+      alsoHide.forEach(function (node) {
+        setDeferred(node, false);
+      });
     }
 
     function reset() {
       revealed = false;
+      afterJudged = false;
       hideAll();
       if (placeholder.parentNode == null && takeawayEl && takeawayEl.parentNode) {
         takeawayEl.parentNode.insertBefore(placeholder, takeawayEl);
       }
     }
 
-    return { reveal: reveal, reset: reset, isRevealed: function () { return revealed; } };
+    return {
+      reveal: reveal,
+      revealAfterJudgement: revealAfterJudgement,
+      reset: reset,
+      isRevealed: function () {
+        return revealed;
+      },
+    };
   }
 
   function flashOutcome(outcomeEl) {
@@ -407,6 +473,45 @@
   }
 
   // ---------------------------------------------------------------------------
+  // Going further: typeset .formula[data-tex] with KaTeX when available
+  // ---------------------------------------------------------------------------
+
+  function typesetMath(root) {
+    root = root || document;
+
+    function run() {
+      if (!global.katex || typeof global.katex.renderToString !== "function") {
+        return false;
+      }
+      const nodes = root.querySelectorAll
+        ? root.querySelectorAll(".formula[data-tex]:not([data-typeset='1'])")
+        : [];
+      Array.prototype.forEach.call(nodes, function (el) {
+        const tex = el.getAttribute("data-tex");
+        if (!tex) return;
+        try {
+          el.innerHTML = global.katex.renderToString(tex, {
+            displayMode: true,
+            throwOnError: false,
+            strict: "ignore",
+          });
+          el.setAttribute("data-typeset", "1");
+        } catch (err) {
+          /* keep plain-text fallback already in the element */
+        }
+      });
+      return true;
+    }
+
+    if (run()) return;
+    let tries = 0;
+    const timer = setInterval(function () {
+      tries += 1;
+      if (run() || tries > 50) clearInterval(timer);
+    }, 40);
+  }
+
+  // ---------------------------------------------------------------------------
   // Register helpers on CS4098.ui (modules and shell)
   // ---------------------------------------------------------------------------
 
@@ -419,5 +524,6 @@
     deferTakeawayUntilInteract: deferTakeawayUntilInteract,
     flashOutcome: flashOutcome,
     attachStageExpand: attachStageExpand,
+    typesetMath: typesetMath,
   };
 })(window);
