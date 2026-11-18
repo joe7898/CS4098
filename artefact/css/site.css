@@ -1388,20 +1388,73 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
 /* ---------------------------------------------------------------------------
    Home (chapter landing)
    --------------------------------------------------------------------------- */
+.home {
+  max-width: min(52rem, 100%);
+}
+
 .home-intro {
-  max-width: min(48rem, 100%);
-  margin-bottom: 2.5rem;
+  max-width: min(42rem, 100%);
+  margin-bottom: 1.5rem;
+}
+
+.home-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: center;
+  margin: 0 0 2.25rem;
+}
+
+.home-cta {
+  display: inline-block;
+  padding: 0.65rem 1.15rem;
+  background: var(--ink);
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.home-cta:hover {
+  background: #1a242c;
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+
+.home-cta:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .home-intro .lede {
-  font-size: 1.2rem;
-  line-height: 1.5;
+  font-size: 1.22rem;
+  line-height: 1.55;
   max-width: none;
+  color: var(--ink);
+  margin-bottom: 1rem;
 }
 
 .home-intro p {
   color: var(--muted);
   max-width: none;
+  margin: 0 0 0.95rem;
+  line-height: 1.55;
+}
+
+.home-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.home-list-heading {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.75rem;
 }
 
 .chapter-list {

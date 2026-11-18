@@ -90,19 +90,41 @@
     els.main.innerHTML = "";
 
     const wrap = document.createElement("div");
-    wrap.innerHTML =
-      '<div class="home-intro">' +
-      '<p class="chapter-kicker">Three modules</p>' +
-      "<h1>Calibrated trust in numbers</h1>" +
-      '<p class="lede">Not “trust AI more” — just know when a number is enough to trust, when to question it, and when to reject what it is being used to claim.</p>' +
-      "<p>Each page is a short story with a number attached — Isla’s grade predictor, Claire’s news headline, Isla’s writing helper. " +
-      "Use the chart or the counts, then choose trust, question, or reject. " +
-      "<em>Graph-first</em> puts the story and the chart up front; <em>More guidance</em> walks you through step by step. " +
-      "Want more detail? Open Going further on each page. " +
-      "Where the ideas come from: <a href=\"#sources\">Sources</a>.</p>" +
-      "</div>";
+    wrap.className = "home";
 
-    // Chapter cards — titles match each module H1
+    // Story first: what people already see, why it matters, what practice gives you
+    const intro = document.createElement("div");
+    intro.className = "home-intro";
+    intro.innerHTML =
+      '<p class="chapter-kicker">Everyday numbers</p>' +
+      "<h1>Calibrated trust in numbers</h1>" +
+      '<p class="lede">You already meet confident figures all the time — a predicted mark on a dashboard, ' +
+      "a headline that says a test is “99% accurate,” a writing helper that flashes <strong>confidence&nbsp;82</strong>. " +
+      "They look finished. They invite you to nod and move on.</p>" +
+      "<p>Often the hard part is not the maths. It is noticing what the number is quietly asking you to believe. " +
+      "That it will hold for the next person. That “accurate” means almost never wrong for you. " +
+      "That a high score means the answer is safe to take.</p>" +
+      "<p>This site is a few minutes of practice for that pause. " +
+      "You will sit with short, made-up situations — the kind of claims tools and news already make — " +
+      "change a picture or a set of counts, and decide for yourself: " +
+      "is this enough to <strong>trust</strong>, something to <strong>question</strong>, or a leap you should <strong>reject</strong>?</p>" +
+      "<p>You will not leave as a statistician. You might leave a little slower to accept a polished figure — " +
+      "and clearer about when that caution is earned. " +
+      "No account, no live chatbot; just you and the screen.</p>";
+    wrap.append(intro);
+
+    const cta = document.createElement("p");
+    cta.className = "home-cta-row";
+    cta.innerHTML =
+      '<a class="home-cta" href="#fit">Start here</a>';
+    wrap.append(cta);
+
+    // Paths in after the story — not the opening frame
+    const listHead = document.createElement("h2");
+    listHead.className = "home-list-heading";
+    listHead.textContent = "Three short stories";
+    wrap.append(listHead);
+
     const list = document.createElement("ol");
     list.className = "chapter-list";
 
@@ -111,19 +133,19 @@
         "fit",
         "1",
         "Looking perfect on old data",
-        "Isla’s grade predictor looked perfect on past students — should she trust 62 for the next assessment?",
+        "A tool looked flawless on past students — should that settle a prediction for the next assessment?",
       ],
       [
         "baserate",
         "2",
         "When a high accuracy still misleads",
-        "Claire’s news story: “99% accurate” illness detection — what do counts out of 1,000 show?",
+        "A news story boasts “99% accurate” detection — what changes when you count people out of 1,000?",
       ],
       [
         "uncertainty",
         "3",
         "A confidence score that hides a range",
-        "Isla’s writing helper shows confidence score 82 (0–100) with no range — enough to accept a rewrite if her cutoff is 75?",
+        "A writing helper shows confidence 82 with no range — is that enough to accept a rewrite?",
       ],
     ];
 
@@ -244,10 +266,17 @@
 
   if (els.restartBtn) {
     els.restartBtn.addEventListener("click", function () {
-      if (state.active && state.active.reset) {
-        state.active.reset();
-      } else {
-        render();
+      // Remount the module so the graph and controls reset cleanly,
+      // then return the reader to the top of the page.
+      if (state.route === "home") return;
+      render();
+      window.scrollTo(0, 0);
+      if (els.main && typeof els.main.focus === "function") {
+        try {
+          els.main.focus({ preventScroll: true });
+        } catch (e) {
+          els.main.focus();
+        }
       }
     });
   }
