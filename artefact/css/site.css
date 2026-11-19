@@ -168,6 +168,11 @@ a:hover {
   gap: 0.1rem;
 }
 
+/* [hidden] must win over .seg { display: inline-flex } (home page) */
+.seg[hidden] {
+  display: none !important;
+}
+
 .seg button {
   appearance: none;
   border: 0;
@@ -1429,19 +1434,21 @@ body:not([data-route="home"]) .site-nav a:not([aria-current="page"]) {
   outline-offset: 3px;
 }
 
-.home-intro .lede {
-  font-size: 1.22rem;
+.home-intro p {
+  font-size: 1.05rem;
   line-height: 1.55;
   max-width: none;
   color: var(--ink);
-  margin-bottom: 1rem;
+  margin: 0 0 0.95rem;
 }
 
-.home-intro p {
-  color: var(--muted);
-  max-width: none;
-  margin: 0 0 0.95rem;
-  line-height: 1.55;
+.home-intro .home-hook {
+  margin: 0.15rem 0 0.95rem;
+}
+
+.home-intro .home-hook strong {
+  font-weight: 700;
+  font-size: inherit;
 }
 
 .home-intro p:last-child {

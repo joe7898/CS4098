@@ -76,7 +76,10 @@
       }
     });
 
-    // Restart only makes sense on a module page
+    // Layout toggle and Restart only make sense on a module page
+    if (els.variantSeg) {
+      els.variantSeg.hidden = state.route === "home";
+    }
     if (els.restartBtn) {
       els.restartBtn.hidden = state.route === "home";
     }
@@ -92,25 +95,24 @@
     const wrap = document.createElement("div");
     wrap.className = "home";
 
-    // Story first: what people already see, why it matters, what practice gives you
+    // Opening pitch: AI everywhere → the accuracy question → what this site offers
     const intro = document.createElement("div");
     intro.className = "home-intro";
     intro.innerHTML =
-      '<p class="chapter-kicker">Everyday numbers</p>' +
+      '<p class="chapter-kicker">AI is talking. Are you listening?</p>' +
       "<h1>Calibrated trust in numbers</h1>" +
-      '<p class="lede">You already meet confident figures all the time — a predicted mark on a dashboard, ' +
-      "a headline that says a test is “99% accurate,” a writing helper that flashes <strong>confidence&nbsp;82</strong>. " +
-      "They look finished. They invite you to nod and move on.</p>" +
-      "<p>Often the hard part is not the maths. It is noticing what the number is quietly asking you to believe. " +
-      "That it will hold for the next person. That “accurate” means almost never wrong for you. " +
-      "That a high score means the answer is safe to take.</p>" +
-      "<p>This site is a few minutes of practice for that pause. " +
-      "You will sit with short, made-up situations — the kind of claims tools and news already make — " +
-      "change a picture or a set of counts, and decide for yourself: " +
-      "is this enough to <strong>trust</strong>, something to <strong>question</strong>, or a leap you should <strong>reject</strong>?</p>" +
-      "<p>You will not leave as a statistician. You might leave a little slower to accept a polished figure — " +
-      "and clearer about when that caution is earned. " +
-      "No account, no live chatbot; just you and the screen.</p>";
+      "<p>AI is everywhere! It’s taken the world by storm and is almost unavoidable today. " +
+      "You have likely encountered it in your own life at some point — whether by using it for a task, " +
+      "seeing news articles and social media posts, or simply through a conversation with peers. " +
+      "Most people just accept what it generates as correct.</p>" +
+      "<p>Those outputs often arrive wrapped in scores, percentages, and wording like “accurate.”</p>" +
+      '<p class="home-hook"><strong>But what is the number asking you to believe?</strong></p>' +
+      "<p>That is the purpose of this site. Through three short interactive modules, it will help you " +
+      "explore and question claims about AI tools — not through lengthy and complicated maths and notes, " +
+      "but through simple story-based scenarios. Interactivity lets you see exactly what is going on. " +
+      "Each module ends with a short question to support your learning, and a simple takeaway of when to " +
+      "<strong>trust</strong>, <strong>question</strong>, or <strong>reject</strong> a claim. " +
+      "You will leave with a clearer sense of when to question a confident-looking number — and when not to.</p>";
     wrap.append(intro);
 
     const cta = document.createElement("p");
